@@ -1,38 +1,50 @@
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.Objects;
 
 public class Entity {
     public Vector position, velocity, controlVector;
     int width, height, borderSize, inset;
-    final double ACCELERATION_CONST = 2.0;
-    final double BRAKE_CONST = ACCELERATION_CONST / 3f;
-    final double MAX_ACCELERATION = 28.0;
+    final double ACCELERATION_CONST = 2.4;
+    final double MAX_ACCELERATION = 20.0;
+    final double BRAKE_CONST = ACCELERATION_CONST / 2f;
+    public final boolean HARDWALL = false;
+
     public Entity() {
         position = new Vector(100.0, 100.0);
         velocity = new Vector(0.0, 0.0);
         width = 50;
         height = 50;
-        borderSize = 6;
+        borderSize = 16;
         inset = borderSize / 2;
     }
 
-    public void calcSlowdown() {
+    public double calcSlowdown(double vel) {
+        // Maybe do something less linear as a slowdown formula
+        if (Math.abs(vel) > MAX_ACCELERATION) {
+            return BRAKE_CONST * 4;
+        }
+        return BRAKE_CONST;
+    }
+
+    public Vector getSlowdownVector() {
+        Vector vector = new Vector(0,0);
         if (velocity.getX() >= BRAKE_CONST) {
-            controlVector.setX(-BRAKE_CONST);
+            vector.setX(-calcSlowdown(velocity.getX()));
         } else if (velocity.getX() <= -BRAKE_CONST) {
-            controlVector.setX(BRAKE_CONST);
+            vector.setX(calcSlowdown(velocity.getX()));
         }
         if (velocity.getY() >= BRAKE_CONST) {
-            controlVector.setY(-BRAKE_CONST);
+            vector.setY(-calcSlowdown(velocity.getY()));
         } else if (velocity.getY() <= -BRAKE_CONST) {
-            controlVector.setY(BRAKE_CONST);
+            vector.setY(calcSlowdown(velocity.getY()));
         }
+        return vector;
     }
+
 
     public void calcVelocity() {
         velocity = velocity.add(controlVector);
-        if (velocity.getY() < BRAKE_CONST && velocity.getY() > -BRAKE_CONST) {
+        if (velocity.getY() < BRAKE_CONST && velocity.getY() > -BRAKE_CONST) {  // if speed is VERY low => set to 0
             velocity.setY(0);
         }
         if (velocity.getX() < BRAKE_CONST && velocity.getX() > -BRAKE_CONST) {
@@ -41,57 +53,73 @@ public class Entity {
     }
 
     public void move() {
-        controlVector = new Vector(0,0);
-        calcSlowdown();
+        controlVector = getSlowdownVector();
         calcVelocity();
         position = position.add(velocity);
+        controlVector = new Vector(0,0);
     }
 
     public void update() {
         move();
-        boolean legalPosition = fieldBoundaryCheck(new Vector(0,0), new Vector(GameWindow.width, GameWindow.height));
-        if (!legalPosition) {
-            keepWithinBoundary(new Vector(0,0), new Vector(GameWindow.width, GameWindow.height));
-        }
+        fieldBoundaryCheck(new Vector(0,0), new Vector(GameWindow.width, GameWindow.height));
     }
 
     public void accelerate(char dir) {
-        double acc = ACCELERATION_CONST;
-        switch (dir) {
-            case 'W':
-                if ( ((velocity.getX() * -1) + acc) > MAX_ACCELERATION ) {
-                    acc = 0;
-                }
-                break;
-            case 'E':
-                if ( (velocity.getX() + acc) > MAX_ACCELERATION ) {
-                    acc = 0;
-                }
-                break;
-            case 'N':
-                if ( ((velocity.getY() * -1) + acc) > MAX_ACCELERATION ) {
-                    acc = 0;
-                }
-                break;
-            case 'S':
-                if ( (velocity.getY() + acc) > MAX_ACCELERATION ) {
-                    acc = 0;
-                }
-                break;
-            default:
-                System.out.println("Fatal ERROR: accelerate");
-                System.exit(0);
+        // Since slowdown always run, this won't force it to adapt to acceleration
+        double acc = ACCELERATION_CONST + BRAKE_CONST;
+        if (dir == 'W' || dir == 'E') {
+            if ( (Math.abs(velocity.getX()) + acc) > MAX_ACCELERATION ) {
+                acc = MAX_ACCELERATION + BRAKE_CONST - Math.abs(velocity.getX());
+            }
+        } else if (dir == 'N' || dir == 'S') {
+            if ( Math.abs(velocity.getY()) > MAX_ACCELERATION ) {
+                acc = MAX_ACCELERATION + BRAKE_CONST - Math.abs(velocity.getY());
+            }
+        } else {
+            System.out.println("Fatal ERROR: accelerate");
+            System.exit(0);
+        }
+        if (acc < 0) {  // when boosting this function will try to compensate to negative acceleration
+            acc = 0;
         }
         changeSpeed(dir, acc);
+    }
+
+    public void boost() {
+        double accBoostValue = MAX_ACCELERATION * 4;
+        //if ( velocity.getX() > 0 ) {
+        if (WindowKeyListener.d && !WindowKeyListener.a) {
+            setSpeed('E', accBoostValue);
+        } else if (WindowKeyListener.a && !WindowKeyListener.d) {
+            setSpeed('W', accBoostValue);
+        }
+        if (WindowKeyListener.s && !WindowKeyListener.w) {
+            setSpeed('S', accBoostValue);
+        } else if (WindowKeyListener.w && !WindowKeyListener.s) {
+            setSpeed('N', accBoostValue);
+        }
+    }
+    public void singleDirectionBoost() {
+        double accBoostValue = MAX_ACCELERATION * 4;
+        //if ( velocity.getX() > 0 ) {
+        if (WindowKeyListener.d && !(WindowKeyListener.a || WindowKeyListener.s || WindowKeyListener.w)) {
+            setSpeed('E', accBoostValue);
+        } else if (WindowKeyListener.a && !(WindowKeyListener.w || WindowKeyListener.s || WindowKeyListener.d)) {
+            setSpeed('W', accBoostValue);
+        } else if (WindowKeyListener.s && !(WindowKeyListener.w || WindowKeyListener.a || WindowKeyListener.d)) {
+            setSpeed('S', accBoostValue);
+        } else if (WindowKeyListener.w && !(WindowKeyListener.a || WindowKeyListener.s || WindowKeyListener.d)) {
+            setSpeed('N', accBoostValue);
+        }
     }
 
 
     public void changeSpeed(char direction, double speed) {
         Vector newSpeed = new Vector(0.0, 0.0);
         switch (direction) {
-            case 'W' -> newSpeed.setX(-1f * speed);
+            case 'W' -> newSpeed.setX(-speed);
             case 'E' -> newSpeed.setX(speed);
-            case 'N' -> newSpeed.setY(-1f * speed);
+            case 'N' -> newSpeed.setY(-speed);
             case 'S' -> newSpeed.setY(speed);
             default -> {
                 System.out.println("Fatal ERROR: changeSpeed");
@@ -102,9 +130,9 @@ public class Entity {
     }
     public void setSpeed(char direction, double speed) {
         switch (direction) {
-            case 'W' -> velocity.setX(-1f * speed);
+            case 'W' -> velocity.setX(-speed);
             case 'E' -> velocity.setX(speed);
-            case 'N' -> velocity.setY(-1f * speed);
+            case 'N' -> velocity.setY(-speed);
             case 'S' -> velocity.setY(speed);
             default -> {
                 System.out.println("Fatal ERROR: changeSpeed");
@@ -112,7 +140,24 @@ public class Entity {
             }
         }
     }
-    public void keepWithinBoundary(Vector minVector, Vector maxVector) {
+
+    public void wallLoop(Vector minVector, Vector maxVector) {
+        double xSign = Math.signum(velocity.getX());
+        double ySign = Math.signum(velocity.getY());
+        if (position.getX() > maxVector.getX() && xSign >= 0) {
+            position.setX(minVector.getX() - width);
+        }
+        if (position.getY() > maxVector.getY() && ySign >= 0) {
+            position.setY(minVector.getY() - height);
+        }
+        if ( (position.getX() + width) < minVector.getX() && xSign <= 0) {
+            position.setX(maxVector.getX());
+        }
+        if ( (position.getY() + height) < minVector.getY() && ySign <= 0) {
+            position.setY(maxVector.getY());
+        }
+    }
+    public void wallBoundary(Vector minVector, Vector maxVector) {
         if ((position.getX() + width) > maxVector.getX()) {
             position.setX(maxVector.getX() - width);
             velocity.setX(0);
@@ -130,26 +175,17 @@ public class Entity {
             velocity.setY(0);
         }
     }
-    public boolean fieldBoundaryCheck(Vector minVector, Vector maxVector) {
-        if ((position.getX() + width) > maxVector.getX()) {
-            System.out.println("Too far RIGHT.");
-            return false;
-        } else if ((position.getY() + height) > maxVector.getY()) {
-            System.out.println("Too far DOWN.");
-            return false;
-        } else if (position.getX() < minVector.getX()) {
-            System.out.println("Too far LEFT.");
-            return false;
-        } else if (position.getY() < minVector.getY()) {
-            System.out.println("Too far UP.");
-            return false;
+    public void fieldBoundaryCheck(Vector minVector, Vector maxVector) {
+        if (HARDWALL) {
+            wallBoundary(minVector, maxVector);
+        } else {
+            wallLoop(minVector, maxVector);
         }
-        return true;
     }
 
     public void printPos() {
         String direction = "";
-        System.out.print("X: " + position.getX() + ", Y: " + position.getY());
+        System.out.printf("X: %.1f, Y: %.1f", position.getX(), position.getY());
         if (velocity.getY() > 0) {
             direction += "South";
         } else if (velocity.getY() < 0) {
@@ -164,7 +200,8 @@ public class Entity {
             direction = "None";
         }
         System.out.print(", Movement direction: " + direction);
-        System.out.println(", Velocity Horizontal: " + velocity.getX() + ", Vertical: " + velocity.getY());
+        System.out.printf(", Velocity Horizontal: %.1f, Vertical: %.1f\n", velocity.getX(), velocity.getY());
+        // System.out.println(", Velocity Horizontal: " + velocity.getX() + ", Vertical: " + velocity.getY());
     }
 
     public void render(Graphics2D g2d) {

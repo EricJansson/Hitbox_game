@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class WindowKeyListener implements KeyListener {
+    static boolean space = false;
     static boolean w = false;
     static boolean a = false;
     static boolean s = false;
@@ -15,9 +16,7 @@ public class WindowKeyListener implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
-        if (keyCode == KeyEvent.VK_SPACE) {
-            // createNewRectangle();
-        } else if (keyCode == KeyEvent.VK_W) {  // NORTH
+        if (keyCode == KeyEvent.VK_W) {  // NORTH
             w = true;
         } else if (keyCode == KeyEvent.VK_A) {  // WEST
             a = true;
@@ -34,7 +33,11 @@ public class WindowKeyListener implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // Not used
+        char keyChar = e.getKeyChar();
+        if (keyChar == ' ') {
+            space = true;
+            System.out.println("Space pressed!");
+        }
     }
 
     @Override
@@ -49,7 +52,6 @@ public class WindowKeyListener implements KeyListener {
         } else if (keyCode == KeyEvent.VK_D) {  // EAST
             d = false;
         }
-        // Not used
     }
 
 }

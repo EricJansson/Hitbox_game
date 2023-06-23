@@ -47,6 +47,11 @@ public class GamePanel extends JPanel implements ActionListener {
         if (WindowKeyListener.s) {
             GamePanel.hero.accelerate('S');
         }
+        if (WindowKeyListener.space) {
+            GamePanel.hero.boost();
+            System.out.println("BOOST!!");
+            WindowKeyListener.space = false;
+        }
     }
 
     @Override
