@@ -9,6 +9,7 @@ public class GamePanel extends JPanel implements ActionListener {
     public static GameModel model;
     public static MainGraphics mainGFX;
     public static Entity hero;
+    public static Matrix_hitbox matrix;
     static int WIDTH = GameWindow.width;
     static int HEIGHT = GameWindow.height;
     static final int FRAMES_PER_SECOND = 60;
@@ -16,6 +17,7 @@ public class GamePanel extends JPanel implements ActionListener {
     public GamePanel() {
         model = new GameModel();
         mainGFX = new MainGraphics(this);
+        matrix = new Matrix_hitbox();
         WindowKeyListener keyLstnr = new WindowKeyListener();
         addKeyListener(keyLstnr);
         start();

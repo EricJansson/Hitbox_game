@@ -9,7 +9,7 @@ public class GameWindow extends JFrame {
         setTitle("Window Example");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 400);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        // setExtendedState(JFrame.MAXIMIZED_BOTH);
         setUndecorated(true);
         setLocationRelativeTo(null);
         GamePanel gamePanel = new GamePanel();
