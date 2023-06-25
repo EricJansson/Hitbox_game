@@ -9,6 +9,7 @@ public class WindowKeyListener implements KeyListener {
     static boolean a = false;
     static boolean s = false;
     static boolean d = false;
+    private boolean spacePressed = false;
 
     public WindowKeyListener() {
 
@@ -34,7 +35,8 @@ public class WindowKeyListener implements KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
         char keyChar = e.getKeyChar();
-        if (keyChar == ' ') {
+        if (keyChar == ' ' && !spacePressed) {
+            spacePressed = true;
             space = true;
             System.out.println("Space pressed!");
         }
@@ -51,6 +53,8 @@ public class WindowKeyListener implements KeyListener {
             s = false;
         } else if (keyCode == KeyEvent.VK_D) {  // EAST
             d = false;
+        } else if (keyCode == KeyEvent.VK_SPACE) {  // EAST
+            spacePressed = false;
         }
     }
 

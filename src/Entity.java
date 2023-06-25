@@ -63,12 +63,12 @@ public class Entity {
         controlVector = getSlowdownVector();
         calcVelocity();
         position = position.add(velocity);
+        hitbox.updateMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
         if (GameModel.checkAllCollisions(this)) {
             color = Color.RED;
         } else {
             color = Color.GREEN;
         }
-        hitbox.updateMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
         controlVector = new Vector(0,0);
     }
 
