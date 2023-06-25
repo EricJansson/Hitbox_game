@@ -2,18 +2,25 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 public class Entity {
-    public Vector position, velocity, controlVector;
+    public Vector position;
+    public Vector velocity;
+    public Vector controlVector;
+    public Color color = Color.GREEN;
+    GameMatrix hitbox;
     int width, height, borderSize, inset;
     final double ACCELERATION_CONST = 2.4;
     final double MAX_ACCELERATION = 20.0;
     final double BRAKE_CONST = ACCELERATION_CONST / 2f;
     public final boolean HARDWALL = false;
 
-    public Entity() {
-        position = new Vector(100.0, 100.0);
+    public Entity() {this(50f, 50f, 50, 50);}
+    public Entity(double xCor, double yCor) {this(xCor, yCor, 50, 50);}
+    public Entity(double xCor, double yCor, int width, int height) {
+        position = new Vector(xCor, yCor);
         velocity = new Vector(0.0, 0.0);
-        width = 50;
-        height = 50;
+        this.width = width;
+        this.height = height;
+        hitbox = new GameMatrix(position.getX(), position.getX() + this.width, position.getY(), position.getY() + height);
         borderSize = 16;
         inset = borderSize / 2;
     }
@@ -56,6 +63,12 @@ public class Entity {
         controlVector = getSlowdownVector();
         calcVelocity();
         position = position.add(velocity);
+        if (GameModel.checkAllCollisions(this)) {
+            color = Color.RED;
+        } else {
+            color = Color.GREEN;
+        }
+        hitbox.updateMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
         controlVector = new Vector(0,0);
     }
 
@@ -83,34 +96,6 @@ public class Entity {
             acc = 0;
         }
         changeSpeed(dir, acc);
-    }
-
-    public void boost() {
-        double accBoostValue = MAX_ACCELERATION * 4;
-        //if ( velocity.getX() > 0 ) {
-        if (WindowKeyListener.d && !WindowKeyListener.a) {
-            setSpeed('E', accBoostValue);
-        } else if (WindowKeyListener.a && !WindowKeyListener.d) {
-            setSpeed('W', accBoostValue);
-        }
-        if (WindowKeyListener.s && !WindowKeyListener.w) {
-            setSpeed('S', accBoostValue);
-        } else if (WindowKeyListener.w && !WindowKeyListener.s) {
-            setSpeed('N', accBoostValue);
-        }
-    }
-    public void singleDirectionBoost() {
-        double accBoostValue = MAX_ACCELERATION * 4;
-        //if ( velocity.getX() > 0 ) {
-        if (WindowKeyListener.d && !(WindowKeyListener.a || WindowKeyListener.s || WindowKeyListener.w)) {
-            setSpeed('E', accBoostValue);
-        } else if (WindowKeyListener.a && !(WindowKeyListener.w || WindowKeyListener.s || WindowKeyListener.d)) {
-            setSpeed('W', accBoostValue);
-        } else if (WindowKeyListener.s && !(WindowKeyListener.w || WindowKeyListener.a || WindowKeyListener.d)) {
-            setSpeed('S', accBoostValue);
-        } else if (WindowKeyListener.w && !(WindowKeyListener.a || WindowKeyListener.s || WindowKeyListener.d)) {
-            setSpeed('N', accBoostValue);
-        }
     }
 
 
@@ -221,7 +206,7 @@ public class Entity {
 
         // Apply the translation using the AffineTransform
         // g2d.drawImage(vehicle.getImage(), affTrans, null);
-        g2d.setColor(Color.RED);
+        g2d.setColor(color);
 
         g2d.setStroke(new BasicStroke(borderSize));
         g2d.drawRect((int) position.getX() + inset, (int) position.getY() + inset, width - borderSize, height - borderSize);

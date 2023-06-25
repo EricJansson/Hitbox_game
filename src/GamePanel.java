@@ -8,16 +8,17 @@ import java.awt.event.KeyEvent;
 public class GamePanel extends JPanel implements ActionListener {
     public static GameModel model;
     public static MainGraphics mainGFX;
-    public static Entity hero;
-    public static Matrix_hitbox matrix;
+    public static Hero hero;
     static int WIDTH = GameWindow.width;
     static int HEIGHT = GameWindow.height;
     static final int FRAMES_PER_SECOND = 60;
     static Timer timer;
+    long startTime;
     public GamePanel() {
+        startTime = System.currentTimeMillis();
         model = new GameModel();
         mainGFX = new MainGraphics(this);
-        matrix = new Matrix_hitbox();
+        // Matrix_hitbox MyMatrix = new Matrix_hitbox();
         WindowKeyListener keyLstnr = new WindowKeyListener();
         addKeyListener(keyLstnr);
         start();
@@ -68,7 +69,6 @@ public class GamePanel extends JPanel implements ActionListener {
             checkControls();
             updateModel();
             repaint();
-
         }
     }
 
