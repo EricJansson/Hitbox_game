@@ -7,6 +7,14 @@ public class Matrix_hitbox {
     public GameMatrix matrixD;
     public GameMatrix matrixE;
     public Matrix_hitbox() {
+
+        Vector2D v1 = new Vector2D(-4f, 4f, 3f, 2f);
+        Vector2D v2 = new Vector2D(2f, 2f, 2f, 2f);
+
+        VectorCalculations.isIntersecting(v1, v2);
+
+
+        /*
         // Create two matrices
         // matrixA = new GameMatrix(1.0, 5.0, 7.0, 8.0);
         // matrixB = new GameMatrix(4.0, 7.0, 4.0, 9.0);
@@ -30,7 +38,6 @@ public class Matrix_hitbox {
         GameMatrix test7 = matrixA.minus(matrixD);
         GameMatrix test8 = matrixD.minus(matrixA);
 
-
         GameMatrix test9 = matrixA.minus(matrixB.mirrorMatrix());
         GameMatrix test10 = matrixB.minus(matrixA.mirrorMatrix());
         GameMatrix test11 = matrixB.minus(matrixC.mirrorMatrix());
@@ -39,9 +46,6 @@ public class Matrix_hitbox {
         GameMatrix test14 = matrixD.minus(matrixC.mirrorMatrix());
         GameMatrix test15 = matrixE.minus(matrixA.mirrorMatrix());
         GameMatrix test16 = matrixA.minus(matrixE.mirrorMatrix());
-
-
-
 
         System.out.print("\n\n\n\n");
 
@@ -77,10 +81,6 @@ public class Matrix_hitbox {
         matrixA.collisionCheck(matrixE);
         test16.displayMatrix(true);
 
-
-
-
-
         System.out.print("\n\n\n\n");
 
         System.out.println("B - D: Should NOT intersect...");
@@ -106,7 +106,7 @@ public class Matrix_hitbox {
 
         System.out.println("B - C: SHOULD intersect!!");
         test6.displayMatrix(true);
-
+         */
     }
 
 }

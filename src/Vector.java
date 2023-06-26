@@ -26,7 +26,7 @@ public class Vector {
         return new Vector(x + other.x, y + other.y);
     }
 
-    public Vector subtract(Vector other) {
+    public Vector minus(Vector other) {
         return new Vector(x - other.x, y - other.y);
     }
 

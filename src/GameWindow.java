@@ -10,15 +10,16 @@ public class GameWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 400);
         // setExtendedState(JFrame.MAXIMIZED_BOTH);
-        width = getSize().width;
-        height = getSize().height;
         setUndecorated(true);
         setLocationRelativeTo(null);
         GamePanel gamePanel = new GamePanel();
         add(gamePanel);
         setVisible(true);
+        width = getSize().width;
+        height = getSize().height;
         System.out.print("Window size: ");
         System.out.println(getSize());
+        gamePanel.start();
     }
 
     public void closeWindow() {
