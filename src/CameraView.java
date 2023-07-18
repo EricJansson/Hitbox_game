@@ -9,7 +9,7 @@ public class CameraView {
         }
     }
     public static void moveCam(int x, int y) {
-        MainGraphics.gamePanel.setBounds(x, y, GameWindow.width, GameWindow.height);
+        BackgroundPanel.setBackgroundPos(new Vector(x, y));
     }
 
     public static void followTarget() {

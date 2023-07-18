@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 
 public class GamePanel extends JPanel implements ActionListener {
     public static GameModel model;
@@ -27,8 +28,14 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public static void drawMap(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        AffineTransform originalTransform = g2d.getTransform();
+        CameraView.updateCam();
         field.background.render((Graphics2D) g);
         mainGFX.renderAllEntities((Graphics2D) g);
+        // Disable everything being dependent on the background
+        g2d.setTransform(originalTransform);
+        mainGFX.displayBorderWindow((Graphics2D) g, 600, 400);
     }
 
     public void updateModel() {

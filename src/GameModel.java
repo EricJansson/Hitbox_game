@@ -9,7 +9,7 @@ public class GameModel {
         createEntity(400, 80, 80, 20);
         createEntity(600, 300, 50, 50);
         createHero(HERO_X_COR, HERO_Y_COR); // 800 / 400
-        // CameraView.setTarget(GamePanel.hero);
+        CameraView.setTarget(GamePanel.hero);
     }
 
     /* TODO

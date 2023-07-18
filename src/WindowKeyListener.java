@@ -4,11 +4,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class WindowKeyListener implements KeyListener {
+    int ii = 0;
     static boolean space = false;
     static boolean w = false;
     static boolean a = false;
     static boolean s = false;
     static boolean d = false;
+    static boolean t = false;
     private boolean spacePressed = false;
 
     public WindowKeyListener() {
@@ -29,6 +31,11 @@ public class WindowKeyListener implements KeyListener {
             // gameWindow.dispose(); // Close window
             System.exit(0); // Terminate the application
             // gameWindow.closeWindow();
+        } else if (keyCode == KeyEvent.VK_T) {  // Test
+            // Move background
+            t = true;
+            if (ii >= GameModel.allEntities.size() - 1) ii = 0; else ii++;
+            CameraView.setTarget(GameModel.allEntities.get(ii));
         }
     }
 
@@ -55,6 +62,8 @@ public class WindowKeyListener implements KeyListener {
             d = false;
         } else if (keyCode == KeyEvent.VK_SPACE) {  // EAST
             spacePressed = false;
+        } else if (keyCode == KeyEvent.VK_T) {  // Test
+            t = false;
         }
     }
 

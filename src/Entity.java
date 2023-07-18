@@ -216,20 +216,17 @@ public class Entity {
         // Get the rounded position and orientation of the vehicle
         int roundedX = (int) Math.round(position.getX());
         int roundedY = (int) Math.round(position.getY());
-        angle ++;
-        if (angle >= 360) angle = 0;
+        // angle ++;
+        // if (angle >= 360) angle = 0;
 
         int imgWidth = getImage().getWidth();
         int imgHeight = getImage().getHeight();
-
         // Rotate the graphics
         // g2d.rotate(Math.round(angle), roundedX + (float) (width / 2), roundedY + (float) (height / 2));
 
         // Set the translation to the correct position
         affTrans.translate(roundedX - (float) (imgWidth / 2) + (float) (width / 2), roundedY - (float) (imgHeight / 2) + (float) (height / 2));
-
         // Apply the translation using the AffineTransform
-        // g2d.drawImage(getImage(), affTrans, null);
         g2d.drawImage(getImage(), affTrans, null);
         g2d.setTransform(originalTransform);
 

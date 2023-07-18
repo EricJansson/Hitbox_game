@@ -27,11 +27,18 @@ public class BackgroundPanel {
 
 
     public void render(Graphics2D g2d) {
-        AffineTransform originalTransform = g2d.getTransform();
+        AffineTransform transform = g2d.getTransform();
+        transform.translate(position.getX(), position.getY());
         // Apply the translation using the AffineTransform
-        g2d.drawImage(getImage(), new AffineTransform(), null);
-        g2d.setTransform(originalTransform);
+        g2d.drawImage(getImage(), transform, null);
+        g2d.setTransform(transform);
+    }
+
+
+    public static void setBackgroundPos(Vector pos) {
+        position = pos;
     }
 
     public BufferedImage getImage() { return image; }
+
 }
