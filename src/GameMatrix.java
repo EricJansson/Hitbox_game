@@ -1,5 +1,7 @@
 import org.ejml.simple.SimpleMatrix;
 
+import java.awt.*;
+
 
 public class GameMatrix {
     SimpleMatrix matrix;
@@ -49,6 +51,18 @@ public class GameMatrix {
         System.out.printf("Row(1)    yDown:   %.1f   yUp:     %.1f\n", matrix.get(2), matrix.get(3));
     }
 
+    public void drawMatrix(Graphics2D g2d, Color color) {
+        int borderSize = 12;
+        int inset = borderSize / 2;
+
+        g2d.setColor(color);
+        g2d.setStroke(new BasicStroke(borderSize));
+        g2d.drawRect((int) getXmin() + inset, (int) getYmin() + inset, (int) (getXmax() - getXmin()) - borderSize, (int) (getYmax() - getYmin()) - borderSize);
+        // g2d.drawRect((int) position.getX() + inset, (int) position.getY() + inset, width - borderSize, height - borderSize);
+        // g2d.drawRect((int) getXmin(), (int) getYmax(), (int) (getXmax() - getXmin()), (int) (getYmax() - getYmin()));
+
+
+    }
 
     public GameMatrix mirrorMatrix() {
         return new GameMatrix(getXmax(), getXmin(), getYmax(), getYmin());

@@ -1,23 +1,37 @@
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 public class Entity {
+    public BufferedImage image = null;
+    static final String IMG_FILE_NAME = "slime3";
     public Vector position;
     public Vector2D velocity;
     public Vector controlVector;
     public Color color = Color.GREEN;
     GameMatrix hitbox;
     int width, height, borderSize, inset;
+    double angle = 0.0;
     final double ACCELERATION_CONST = 2.4;
     final double MAX_ACCELERATION = 20.0;
     final double BRAKE_CONST = ACCELERATION_CONST / 2f;
-    public final boolean HARDWALL = false;
 
     public Entity() {this(50f, 50f, 50, 50);}
-    public Entity(double xCor, double yCor) {this(xCor, yCor, 50, 50);}
-    public Entity(double xCor, double yCor, int width, int height) {
+    public Entity(double xCor, double yCor) {this(xCor, yCor, 50, 50, IMG_FILE_NAME);}
+    public Entity(double xCor, double yCor, int width, int height) {this(xCor, yCor, width, height, IMG_FILE_NAME);}
+    public Entity(double xCor, double yCor, int width, int height, String imageName) {
         position = new Vector(xCor, yCor);
         velocity = new Vector2D(0.0, 0.0, xCor, yCor);
+        if(image == null) {
+            try {
+                image = ImageIO.read(new File(".\\src\\assets\\" + imageName + ".png"));
+            } catch (Exception e) {
+                System.out.println("Error!");
+                e.printStackTrace();
+            }
+        }
         this.width = width;
         this.height = height;
         hitbox = new GameMatrix(position.getX(), position.getX() + this.width, position.getY(), position.getY() + height);
@@ -75,7 +89,7 @@ public class Entity {
     public void update() {
         move();
         updateVelocityPos();
-        fieldBoundaryCheck(new Vector(0,0), new Vector(GameWindow.width, GameWindow.height));
+        fieldBoundaryCheck(new Vector(0,0), new Vector(Field.width, Field.height));
     }
 
     public void updateVelocityPos() {
@@ -167,7 +181,7 @@ public class Entity {
         }
     }
     public void fieldBoundaryCheck(Vector minVector, Vector maxVector) {
-        if (HARDWALL) {
+        if (Field.HARDWALL) {
             wallBoundary(minVector, maxVector);
         } else {
             wallLoop(minVector, maxVector);
@@ -200,24 +214,25 @@ public class Entity {
         AffineTransform originalTransform = g2d.getTransform();
 
         // Get the rounded position and orientation of the vehicle
-        // int roundedX = Math.round(vehicle.getX());
-        // int roundedY = Math.round(vehicle.getY());
-        // float angle = vehicle.getCurrentAngle();
+        int roundedX = (int) Math.round(position.getX());
+        int roundedY = (int) Math.round(position.getY());
+        angle ++;
+        if (angle >= 360) angle = 0;
+
+        int imgWidth = getImage().getWidth();
+        int imgHeight = getImage().getHeight();
 
         // Rotate the graphics
-        // g2d.rotate(angle, roundedX, roundedY);
+        // g2d.rotate(Math.round(angle), roundedX + (float) (width / 2), roundedY + (float) (height / 2));
 
-        // Set the translation to the rounded position
-        // affTrans.translate(roundedX - vehicle.getWidth() / 2, roundedY - vehicle.getLength() / 2);
+        // Set the translation to the correct position
+        affTrans.translate(roundedX - (float) (imgWidth / 2) + (float) (width / 2), roundedY - (float) (imgHeight / 2) + (float) (height / 2));
 
         // Apply the translation using the AffineTransform
-        // g2d.drawImage(vehicle.getImage(), affTrans, null);
-        g2d.setColor(color);
-
-        g2d.setStroke(new BasicStroke(borderSize));
-        g2d.drawRect((int) position.getX() + inset, (int) position.getY() + inset, width - borderSize, height - borderSize);
-
+        // g2d.drawImage(getImage(), affTrans, null);
+        g2d.drawImage(getImage(), affTrans, null);
         g2d.setTransform(originalTransform);
+
     }
 
     public void renderVelocity(Graphics2D g2d) {
@@ -246,5 +261,15 @@ public class Entity {
 
         g2d.drawLine(arrowHeadX, arrowHeadY, arrowEndX1, arrowEndY1);
         g2d.drawLine(arrowHeadX, arrowHeadY, arrowEndX2, arrowEndY2);
+    }
+
+
+    public BufferedImage getImage() { return image; }
+
+    public void drawHitbox(Graphics2D g2d) {
+        hitbox.drawMatrix(g2d, color);
+        g2d.setColor(Color.DARK_GRAY);
+        g2d.setStroke(new BasicStroke(6));
+        g2d.drawRect((int) position.getX() + inset, (int) position.getY() + inset, width - borderSize, height - borderSize);
     }
 }

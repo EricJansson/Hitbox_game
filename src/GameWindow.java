@@ -3,20 +3,22 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class GameWindow extends JFrame {
-    static int width;
-    static int height;
+    static int width = 1200;
+    static int height = 800;
     public GameWindow() {
         setTitle("Window Example");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 400);
+        setSize(width, height);
         // setExtendedState(JFrame.MAXIMIZED_BOTH);
         setUndecorated(true);
         setLocationRelativeTo(null);
-        GamePanel gamePanel = new GamePanel();
-        add(gamePanel);
+        WindowKeyListener keyLstnr = new WindowKeyListener();
+        addKeyListener(keyLstnr);
         setVisible(true);
         width = getSize().width;
         height = getSize().height;
+        GamePanel gamePanel = new GamePanel();
+        add(gamePanel);
         System.out.print("Window size: ");
         System.out.println(getSize());
         gamePanel.start();

@@ -1,17 +1,22 @@
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 public class Hero extends Entity {
+    static final String IMG_FILE_NAME = "slime2";
     public static final int WIDTH = 50;
     public static final int HEIGHT = 50;
 
     public Color color = Color.GREEN;
 
     public Hero() {
-        super(50f, 50f, WIDTH, HEIGHT);
+        this(50f, 50f);
     }
 
     public Hero(double xCor, double yCor) {
-        super(xCor, yCor, WIDTH, HEIGHT);
+        super(xCor, yCor, WIDTH, HEIGHT, IMG_FILE_NAME);
+        hitbox = new GameMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
     }
 
 

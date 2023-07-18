@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 
 public class GamePanel extends JPanel implements ActionListener {
     public static GameModel model;
+    public static Field field;
     public static MainGraphics mainGFX;
     public static Hero hero;
     static final int FRAMES_PER_SECOND = 60;
@@ -15,10 +16,9 @@ public class GamePanel extends JPanel implements ActionListener {
     public GamePanel() {
         startTime = System.currentTimeMillis();
         model = new GameModel();
+        field = new Field();
         mainGFX = new MainGraphics(this);
         Matrix_hitbox MyMatrix = new Matrix_hitbox();
-        WindowKeyListener keyLstnr = new WindowKeyListener();
-        addKeyListener(keyLstnr);
     }
 
     public void start() {
@@ -27,6 +27,7 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public static void drawMap(Graphics g) {
+        field.background.render((Graphics2D) g);
         mainGFX.renderAllEntities((Graphics2D) g);
     }
 
