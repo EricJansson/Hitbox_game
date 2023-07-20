@@ -14,9 +14,9 @@ public class Entity {
     GameMatrix hitbox;
     int width, height, borderSize, inset;
     double angle = 0.0;
-    final double ACCELERATION_CONST = 2.4;
-    final double MAX_ACCELERATION = 20.0;
-    final double BRAKE_CONST = ACCELERATION_CONST / 2f;
+    final double ACCELERATION_CONST = 2.0;
+    final double MAX_ACCELERATION = 7.0;
+    final double BRAKE_CONST = ACCELERATION_CONST;
 
     public Entity() {this(50f, 50f, 50, 50);}
     public Entity(double xCor, double yCor) {this(xCor, yCor, 50, 50, IMG_FILE_NAME);}

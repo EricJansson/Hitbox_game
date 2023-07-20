@@ -1,23 +1,16 @@
 import java.util.ArrayList;
 
 public class GameModel {
-    double HERO_X_COR = 250;
-    double HERO_Y_COR = 250;
+    double HERO_X_COR = 516;
+    double HERO_Y_COR = 320;
     static ArrayList<Entity> allEntities = new ArrayList<>();
     public GameModel() {
-        createEntity(100, 150, 100, 80);
-        createEntity(400, 80, 80, 20);
-        createEntity(600, 300, 50, 50);
+        createEntity(100, 150, 50, 50);
+        createEntity(700, 300, 50, 50);
+        createEntity(600, 800, 50, 50);
         createHero(HERO_X_COR, HERO_Y_COR); // 800 / 400
-        // CameraView.setTarget(GamePanel.hero);
+        CameraView.setTarget(GamePanel.hero);
     }
-
-    /* TODO
-    - Fix camera, make background its own panel to carry the sprites
-    - Fix hitbox going out of bounds for one frame
-    - Make it possible to use tilemaps for background
-    - Add sprite animations to Entities
-     */
 
     public void updateEntities() {
         for (int i = 0; i< GameModel.allEntities.size(); i++) {

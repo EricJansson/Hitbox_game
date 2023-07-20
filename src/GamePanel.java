@@ -35,13 +35,11 @@ public class GamePanel extends JPanel implements ActionListener {
         // field.background.displayMap((Graphics2D) g);
         mainGFX.renderAllEntities((Graphics2D) g);
 
-        // TODO
-        // Make another function that renders the airbournes above the entities
-        // Make 2 more backgrounds that cycle to simulate animation in the background
+        // Make another function that renders the airbournes above the entities!!!!!
 
         // Disable everything being dependent on the background
         g2d.setTransform(originalTransform);
-        mainGFX.displayBorderWindow((Graphics2D) g, 600, 400);
+        // mainGFX.displayBorderWindow((Graphics2D) g, 600, 400);
     }
 
     public void updateModel() {
