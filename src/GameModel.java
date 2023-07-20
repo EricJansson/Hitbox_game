@@ -1,15 +1,15 @@
 import java.util.ArrayList;
 
 public class GameModel {
-    double HERO_X_COR = 50;
-    double HERO_Y_COR = 50;
+    double HERO_X_COR = 250;
+    double HERO_Y_COR = 250;
     static ArrayList<Entity> allEntities = new ArrayList<>();
     public GameModel() {
         createEntity(100, 150, 100, 80);
         createEntity(400, 80, 80, 20);
         createEntity(600, 300, 50, 50);
         createHero(HERO_X_COR, HERO_Y_COR); // 800 / 400
-        CameraView.setTarget(GamePanel.hero);
+        // CameraView.setTarget(GamePanel.hero);
     }
 
     /* TODO

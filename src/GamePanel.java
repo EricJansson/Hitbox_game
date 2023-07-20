@@ -27,12 +27,18 @@ public class GamePanel extends JPanel implements ActionListener {
         timer.start();
     }
 
-    public static void drawMap(Graphics g) {
+    public void drawMap(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         AffineTransform originalTransform = g2d.getTransform();
         CameraView.updateCam();
         field.background.render((Graphics2D) g);
+        // field.background.displayMap((Graphics2D) g);
         mainGFX.renderAllEntities((Graphics2D) g);
+
+        // TODO
+        // Make another function that renders the airbournes above the entities
+        // Make 2 more backgrounds that cycle to simulate animation in the background
+
         // Disable everything being dependent on the background
         g2d.setTransform(originalTransform);
         mainGFX.displayBorderWindow((Graphics2D) g, 600, 400);
