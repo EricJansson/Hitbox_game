@@ -1,9 +1,38 @@
-import java.util.Arrays;
+package TileMap;
 
 public enum TileID {
-    T0(new int[]{8, 1}),
+    T0(new int[]{0, 0}),
+    T1(new int[]{1, 0}),
+    T2(new int[]{2, 0}),
+    T3(new int[]{2, 0}),
+    T4(new int[]{3, 0}),
+    T5(new int[]{4, 0}),
+    T8(new int[]{6, 2}),
+    T9(new int[]{0, 1}),
+    T10(new int[]{1, 1}),
+    T11(new int[]{2, 1}),
+    T12(new int[]{3, 1}),
+    T13(new int[]{7, 1}),
+    T14(new int[]{4, 1}),
+    T15(new int[]{5, 1}),
+    T16(new int[]{6, 1}),
+    T22(new int[]{4, 2}),
+    T23(new int[]{5, 2}),
+    T26(new int[]{4, 4}),
+    T27(new int[]{5, 4}),
+    T28(new int[]{4, 0}),
+    T29(new int[]{5, 0}),
+    T30(new int[]{0, 1}),
+    T31(new int[]{1, 1}),
+    T32(new int[]{2, 1}),
+    T37(new int[]{0, 3}),
+    T38(new int[]{0, 4}),
+    T42(new int[]{1, 2}),
+    T44(new int[]{3, 2}),
+    T47(new int[]{3, 4}),
+    T48(new int[]{4, 2}),
+    T49(new int[]{5, 2}),
     T50(new int[]{0, 0}),
-
     T52(new int[]{1, 0}),
     T53(new int[]{3, 0}),
     T54(new int[]{4, 0}),
@@ -67,7 +96,7 @@ public enum TileID {
             }
         }
         return null;
-        // System.out.println("TileID - getTileByNumber(): ERROR");
+        // System.out.println("TileMap.TileID - getTileByNumber(): ERROR");
         // throw new IllegalArgumentException("Tile not found for number: " + tileNumber);
     }
 

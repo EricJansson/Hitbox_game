@@ -5,9 +5,12 @@ public class GameModel {
     double HERO_Y_COR = 320;
     static ArrayList<Entity> allEntities = new ArrayList<>();
     public GameModel() {
-        createEntity(100, 150, 50, 50);
-        createEntity(700, 300, 50, 50);
-        createEntity(600, 800, 50, 50);
+        // createEntity(100.0, 150.0, 50, 50);
+        // createEntity(700f, 300f, 50, 50);
+        createEntity(1, 3, 50, 50);
+        createEntity(12, 7, 50, 50);
+        createEntity(9, 13, 50, 50);
+        createEntity(22, 10, 50, 50);
         createHero(HERO_X_COR, HERO_Y_COR); // 800 / 400
         CameraView.setTarget(GamePanel.hero);
     }
@@ -38,8 +41,20 @@ public class GameModel {
         GamePanel.hero = hero;
     }
 
+    public Entity createEntity(Vector coordinates, int width, int height) { return createEntity(coordinates.getX(), coordinates.getY(), width, height); }
+
     public Entity createEntity(double xCor, double yCor, int width, int height) {
         Entity entity = new Entity(xCor, yCor, width, height);
+        allEntities.add(entity);
+        return entity;
+    }
+
+    public Entity createEntity(int xIndex, int yIndex, int width, int height) {
+        int offsetX = (BackgroundPanel.TILE_SIZE / 2) - (width / 2);
+        int offsetY = (BackgroundPanel.TILE_SIZE / 2) - (height / 2);
+        int x = (BackgroundPanel.TILE_SIZE * xIndex) + offsetX;
+        int y = (BackgroundPanel.TILE_SIZE * yIndex) + offsetY;;
+        Entity entity = new Entity(x, y, width, height);
         allEntities.add(entity);
         return entity;
     }

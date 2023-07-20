@@ -1,3 +1,4 @@
+import TileMap.TileID;
 import TileMap.TileMapData;
 
 import javax.imageio.ImageIO;
@@ -11,12 +12,15 @@ public class BackgroundPanel {
     static final int TILE_SIZE = 64;
     static public TileMapData tileMapData = null;
     static public BufferedImage fullMap;
+    static public BufferedImage fullMapAir; // Will overlap entities and hero
     static public BufferedImage imgObstacle = null;
     static public BufferedImage imgBackground = null;
     static public BufferedImage imgDecoration = null;
+    static public BufferedImage imgAirbourne = null;
     static final String FILE_NAME_BACKGROUND = "Layer_1_Background";
     static final String FILE_NAME_OBSTACLE = "Layer_2_Obstacle";
     static final String FILE_NAME_DECORATION = "Layer_3_Decoration";
+    static final String FILE_NAME_AIRBOURNE = "Layer_3_Decoration";
     static public Vector position;
     static public int height;
     static public int width;
@@ -27,28 +31,43 @@ public class BackgroundPanel {
         imgObstacle = setImage(FILE_NAME_OBSTACLE);
         imgDecoration = setImage(FILE_NAME_DECORATION);
         tileMapData = new TileMapData();
-        tileMapData = TileMapData.readTileMapData("tileset");
+        tileMapData = TileMapData.readTileMapData("fullTileset");
         assert tileMapData != null;
-        loadBackgroundMap(tileMapData, BackgroundMap.map);
-        tileMapData = TileMapData.readTileMapData("obstacles");
-        assert tileMapData != null;
-        loadBackgroundMap(tileMapData, BackgroundMap.obstacles);
-        tileMapData = TileMapData.readTileMapData("decoration");
-        assert tileMapData != null;
-        loadBackgroundMap(tileMapData, BackgroundMap.decoration);
+        loadBackgroundMap(tileMapData, new ArrayList[]{BackgroundMap.airbourne, BackgroundMap.decoration, BackgroundMap.obstacles, BackgroundMap.background});
+        // tileMapData = TileMapData.readTileMapData("tileset");
+        // assert tileMapData != null;
+        // loadBackgroundMap(tileMapData, BackgroundMap.map);
+        // tileMapData = TileMapData.readTileMapData("obstacles");
+        // assert tileMapData != null;
+        // loadBackgroundMap(tileMapData, BackgroundMap.obstacles);
+        // tileMapData = TileMapData.readTileMapData("decoration");
+        // assert tileMapData != null;
+        // loadBackgroundMap(tileMapData, BackgroundMap.decoration);
         height = tileMapData.tileshigh * TILE_SIZE;
         width = tileMapData.tileswide * TILE_SIZE;
 
         fullMap = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        paintMap(fullMap.createGraphics());
-    }
+        fullMapAir = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
+        paintMap(fullMap.createGraphics(), imgBackground, BackgroundMap.background);
+        paintMap(fullMap.createGraphics(), imgObstacle, BackgroundMap.obstacles);
+        paintMap(fullMap.createGraphics(), imgDecoration, BackgroundMap.decoration);
+        paintMap(fullMapAir.createGraphics(), imgDecoration, BackgroundMap.airbourne);
+    }
 
     public void render(Graphics2D g2d) {
         AffineTransform transform = g2d.getTransform();
         transform.translate(position.getX(), position.getY());
         // Apply the translation using the AffineTransform
         g2d.drawImage(fullMap, transform, null);
+        g2d.setTransform(transform);
+    }
+
+    public void renderAir(Graphics2D g2d) {
+        AffineTransform transform = fullMap.createGraphics().getTransform();
+        // Apply the translation using the AffineTransform
+        g2d.drawImage(fullMapAir, transform, null);
+        transform = g2d.getTransform();
         g2d.setTransform(transform);
     }
 
@@ -68,10 +87,8 @@ public class BackgroundPanel {
         }
     }
 
-    public void paintMap(Graphics2D g2d) {
-        displayLayer(g2d, imgBackground, BackgroundMap.map);
-        displayLayer(g2d, imgObstacle, BackgroundMap.obstacles);
-        displayLayer(g2d, imgDecoration, BackgroundMap.decoration);
+    public void paintMap(Graphics2D g2d, BufferedImage imgTileset, ArrayList<ArrayList<int[]>> layer) {
+        displayLayer(g2d, imgTileset, layer);
     }
 
     public void loadBackgroundMap(TileMapData tileData, ArrayList<ArrayList<int[]>> map) {
@@ -90,7 +107,27 @@ public class BackgroundPanel {
                 map.get(yy).add(new int[] {tempX, tempY});
             }
         }
-        // BackgroundMap.print();
+    }
+
+    public void loadBackgroundMap(TileMapData tileData, ArrayList<ArrayList<int[]>>[] map) {
+        int rows = tileData.tileshigh;
+        int cols = tileData.tileswide;
+        int tempX, tempY;
+        int tileNum;
+        int[] tileCor;
+        int layers = tileData.layers.size();
+        for (int ii = 0; ii < layers; ii++) {
+            for (int yy = 0; yy < rows; yy++) {
+                map[ii].add(new ArrayList<>());
+                for (int xx = 0; xx < cols; xx++) {
+                    tileNum = tileData.layers.get(ii).tiles.get(xx + (yy * cols)).tile;
+                    tileCor = TileID.getTileCords(tileNum);
+                    tempX = tileCor[0];
+                    tempY = tileCor[1];
+                    map[ii].get(yy).add(new int[]{tempX, tempY});
+                }
+            }
+        }
     }
 
     public static void setBackgroundPos(Vector pos) {
