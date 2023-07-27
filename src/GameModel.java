@@ -11,7 +11,8 @@ public class GameModel {
         createEntity(12, 7, 50, 50);
         createEntity(9, 13, 50, 50);
         createEntity(22, 10, 50, 50);
-        createHero(HERO_X_COR, HERO_Y_COR); // 800 / 400
+        createEntity(16, 9, 50, 50);
+        createHero(14, 10); // 800 / 400
         CameraView.setTarget(GamePanel.hero);
     }
 
@@ -37,6 +38,17 @@ public class GameModel {
 
     public void createHero(double xCor, double yCor) {
         Hero hero = new Hero(xCor, yCor);
+        allEntities.add(hero);
+        GamePanel.hero = hero;
+    }
+
+    public void createHero(int xIndex, int yIndex) {createHero(xIndex,yIndex, Hero.WIDTH, Hero.HEIGHT);}
+    public void createHero(int xIndex, int yIndex, int width, int height) {
+        int offsetX = (BackgroundPanel.TILE_SIZE / 2) - (width / 2);
+        int offsetY = (BackgroundPanel.TILE_SIZE / 2) - (height / 2);
+        int x = (BackgroundPanel.TILE_SIZE * xIndex) + offsetX;
+        int y = (BackgroundPanel.TILE_SIZE * yIndex) + offsetY;;
+        Hero hero = new Hero(x, y, width, height);
         allEntities.add(hero);
         GamePanel.hero = hero;
     }

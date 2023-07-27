@@ -19,6 +19,11 @@ public class Hero extends Entity {
         hitbox = new GameMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
     }
 
+    public Hero(double xCor, double yCor, int width, int height) {
+        super(xCor, yCor, width, height, IMG_FILE_NAME);
+        hitbox = new GameMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
+    }
+
 
     public void boost() {
         double accBoostValue = MAX_ACCELERATION * 4;
