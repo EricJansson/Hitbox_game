@@ -24,10 +24,12 @@ public class Hero extends Entity {
         hitbox = new GameMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
     }
 
-
+    /**
+     * Will increase speed above maxSpeed. Because you can't accelerate when curSpeed > maxSpeed,
+     * that means it will slowly decrease the curSpeed over a short period of time.
+     */
     public void boost() {
         double accBoostValue = MAX_ACCELERATION * 4;
-        //if ( velocity.getX() > 0 ) {
         if (WindowKeyListener.d && !WindowKeyListener.a) {
             setSpeed('E', accBoostValue);
         } else if (WindowKeyListener.a && !WindowKeyListener.d) {

@@ -20,6 +20,9 @@ public class GamePanel extends JPanel implements ActionListener {
         field = new Field();
         mainGFX = new MainGraphics(this);
         Matrix_hitbox MyMatrix = new Matrix_hitbox();
+
+        CameraView.target = null;
+        CameraView.goToTile(14,10);
     }
 
     public void start() {
@@ -35,6 +38,8 @@ public class GamePanel extends JPanel implements ActionListener {
         // field.background.displayMap((Graphics2D) g);
         mainGFX.renderAllEntities((Graphics2D) g);
         field.background.renderAir((Graphics2D) g);
+
+        GameModel.renderAllObstacles((Graphics2D) g);
 
         // Make another function that renders the airbournes above the entities!!!!!
 

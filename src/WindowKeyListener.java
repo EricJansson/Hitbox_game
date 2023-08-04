@@ -11,6 +11,7 @@ public class WindowKeyListener implements KeyListener {
     static boolean s = false;
     static boolean d = false;
     static boolean t = false;
+    static boolean y = false;
     private boolean spacePressed = false;
 
     public WindowKeyListener() {
@@ -36,6 +37,11 @@ public class WindowKeyListener implements KeyListener {
             t = true;
             if (ii >= GameModel.allEntities.size() - 1) ii = 0; else ii++;
             CameraView.setTarget(GameModel.allEntities.get(ii));
+        } else if (keyCode == KeyEvent.VK_Y) {  // Test
+            // Move background
+            y = true;
+            CameraView.target = null;
+            CameraView.goToTile(14,10);
         }
     }
 
@@ -64,6 +70,8 @@ public class WindowKeyListener implements KeyListener {
             spacePressed = false;
         } else if (keyCode == KeyEvent.VK_T) {  // Test
             t = false;
+        } else if (keyCode == KeyEvent.VK_Y) {  // Test
+            y = false;
         }
     }
 

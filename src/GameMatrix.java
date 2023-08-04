@@ -54,18 +54,53 @@ public class GameMatrix {
     public void drawMatrix(Graphics2D g2d, Color color) {
         int borderSize = 12;
         int inset = borderSize / 2;
-
+        int x, y, width, height;
+        x = (int) getXmin() + inset;
+        y = (int) getYmin() + inset;
+        width = (int) (getXmax() - getXmin()) - borderSize;
+        height = (int) (getYmax() - getYmin()) - borderSize;
+        if (width < 4) {
+            width = 4;
+            x -= borderSize / 2;
+        }
+        if (height < 4) {
+            height = 4;
+            y -= borderSize / 2;
+        }
         g2d.setColor(color);
         g2d.setStroke(new BasicStroke(borderSize));
-        g2d.drawRect((int) getXmin() + inset, (int) getYmin() + inset, (int) (getXmax() - getXmin()) - borderSize, (int) (getYmax() - getYmin()) - borderSize);
+        g2d.drawRect(x, y, width, height);
         // g2d.drawRect((int) position.getX() + inset, (int) position.getY() + inset, width - borderSize, height - borderSize);
         // g2d.drawRect((int) getXmin(), (int) getYmax(), (int) (getXmax() - getXmin()), (int) (getYmax() - getYmin()));
-
 
     }
 
     public GameMatrix mirrorMatrix() {
         return new GameMatrix(getXmax(), getXmin(), getYmax(), getYmin());
+    }
+
+    public static double getMatrixCollisionDeltaX(Entity entity, GameMatrix matrix2) {
+        double deltaX = 0.0;
+        if (entity.dir == Direction.SOUTHEAST || entity.dir == Direction.EAST || entity.dir == Direction.NORTHEAST) {
+            deltaX = entity.hitbox.getXmax() - matrix2.getXmin();
+        } else if (entity.dir == Direction.SOUTHWEST || entity.dir == Direction.WEST || entity.dir == Direction.NORTHWEST) {
+            deltaX = matrix2.getXmax() - entity.hitbox.getXmin();
+        } else if (entity.dir == Direction.NORTH || entity.dir == Direction.SOUTH) {
+            deltaX = Math.max(matrix2.getXmax() - entity.hitbox.getXmin(), entity.hitbox.getXmax() - matrix2.getXmin());
+        }
+        return deltaX;
+    }
+
+    public static double getMatrixCollisionDeltaY(Entity entity, GameMatrix matrix2) {
+        double deltaY = 0.0;
+        if (entity.dir == Direction.SOUTHWEST || entity.dir == Direction.SOUTH || entity.dir == Direction.SOUTHEAST) {
+            deltaY = entity.hitbox.getYmax() - matrix2.getYmin();
+        } else if (entity.dir == Direction.NORTHWEST || entity.dir == Direction.NORTH || entity.dir == Direction.NORTHEAST) {
+            deltaY = matrix2.getYmax() - entity.hitbox.getYmin();
+        } else if (entity.dir == Direction.WEST || entity.dir == Direction.EAST) {
+            deltaY = Math.max(entity.hitbox.getYmax() - matrix2.getYmin(), matrix2.getYmax() - entity.hitbox.getYmin());
+        }
+        return deltaY;
     }
 
     public boolean collisionCheck(SimpleMatrix matrix) {

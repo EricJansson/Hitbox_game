@@ -17,6 +17,7 @@ public class BackgroundPanel {
     static public BufferedImage imgBackground = null;
     static public BufferedImage imgDecoration = null;
     static public BufferedImage imgAirbourne = null;
+    // static final String FILE_NAME_BACKGROUND = "Layer_0_Testing";
     static final String FILE_NAME_BACKGROUND = "Layer_1_Background";
     static final String FILE_NAME_OBSTACLE = "Layer_2_Obstacle";
     static final String FILE_NAME_DECORATION = "Layer_3_Decoration";

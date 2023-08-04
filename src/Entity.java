@@ -4,12 +4,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+
 public class Entity {
     public BufferedImage image = null;
     static final String IMG_FILE_NAME = "slime3";
     public Vector position;
     public Vector2D velocity;
     public Vector controlVector;
+    public Direction dir = Direction.NONE;
     public Color color = Color.GREEN;
     GameMatrix hitbox;
     int width, height, borderSize, inset;
@@ -19,12 +21,12 @@ public class Entity {
     final double BRAKE_CONST = ACCELERATION_CONST;
 
     public Entity() {this(50f, 50f, 50, 50);}
-    public Entity(double xCor, double yCor) {this(xCor, yCor, 50, 50, IMG_FILE_NAME);}
-    public Entity(double xCor, double yCor, int width, int height) {this(xCor, yCor, width, height, IMG_FILE_NAME);}
+    public Entity(double xCor, double yCor) {this(xCor, yCor, 50, 50, null);}
+    public Entity(double xCor, double yCor, int width, int height) {this(xCor, yCor, width, height, null);}
     public Entity(double xCor, double yCor, int width, int height, String imageName) {
         position = new Vector(xCor, yCor);
         velocity = new Vector2D(0.0, 0.0, xCor, yCor);
-        if(image == null) {
+        if(image == null && imageName != null) {
             try {
                 image = ImageIO.read(new File(".\\src\\assets\\" + imageName + ".png"));
             } catch (Exception e) {
@@ -63,8 +65,8 @@ public class Entity {
     }
 
 
-    public void calcVelocity() {
-        velocity.dir = velocity.dir.add(controlVector);
+    public void calcVelocity(Vector vector) {
+        velocity.dir = velocity.dir.add(vector);
         if (velocity.dir.getY() < BRAKE_CONST && velocity.dir.getY() > -BRAKE_CONST) {  // if speed is VERY low => set to 0
             velocity.dir.setY(0);
         }
@@ -73,15 +75,73 @@ public class Entity {
         }
     }
 
+
+    public void obstacleCheck() {
+        double deltaX, deltaY;
+        int counter = 0;
+        Entity tempEntity = this;
+        Vector position = this.position.add(velocity.dir);
+        tempEntity.hitbox.updateMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
+
+        Obstacle collidingObst = GameModel.checkAllObstacleCollisions(tempEntity);
+        // Incase of colliding with multiple obstacles, a loop is needed
+        while (collidingObst != null) {
+            deltaX = GameMatrix.getMatrixCollisionDeltaX(this, collidingObst.hitbox);
+            deltaY = GameMatrix.getMatrixCollisionDeltaY(this, collidingObst.hitbox);
+            double vectorAndDeltaXRatio = Math.abs(deltaX / velocity.dir.getX());
+            double vectorAndDeltaYRatio = Math.abs(deltaY / velocity.dir.getY());
+
+            if (vectorAndDeltaXRatio == vectorAndDeltaYRatio) { // if hitting a corner...
+                if (Math.abs(velocity.dir.getX()) > Math.abs(velocity.dir.getY())) { // faster horizontal speed
+                    vectorAndDeltaXRatio = vectorAndDeltaYRatio + 1;
+                    System.out.println("   Faster HORIZONTAL");
+                } else if (Math.abs(velocity.dir.getX()) < Math.abs(velocity.dir.getY())) { // faster vertical speed
+                    vectorAndDeltaYRatio = vectorAndDeltaXRatio + 1;
+                    System.out.println("   Faster VERTICAL");
+                } else { // choose random wall to adjust to
+                    System.out.println("         RANDOM DIR (NOT GOOD)          ");
+                    vectorAndDeltaXRatio = Math.random();
+                    vectorAndDeltaYRatio = Math.random();
+                }
+            }
+            // This if case will decide whether to adjust to the horizontal or vertical wall
+            if (vectorAndDeltaXRatio < vectorAndDeltaYRatio) {
+                if (dir == Direction.SOUTHEAST || dir == Direction.EAST || dir == Direction.NORTHEAST) {
+                    velocity.dir.setX(velocity.dir.getX() - deltaX);
+                } else if (dir == Direction.SOUTHWEST || dir == Direction.WEST || dir == Direction.NORTHWEST) {
+                    velocity.dir.setX(velocity.dir.getX() + deltaX);
+                }
+            } else { // else if (vectorAndDeltaXRatio > vectorAndDeltaYRatio)
+                if (dir == Direction.SOUTHWEST || dir == Direction.SOUTH || dir == Direction.SOUTHEAST) {
+                    velocity.dir.setY(velocity.dir.getY() - deltaY);
+                } else if (dir == Direction.NORTHWEST || dir == Direction.NORTH || dir == Direction.NORTHEAST) {
+                    velocity.dir.setY(velocity.dir.getY() + deltaY);
+                }
+            }
+            position = this.position.add(velocity.dir);
+            tempEntity = this;
+            tempEntity.hitbox.updateMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
+            collidingObst = GameModel.checkAllObstacleCollisions(tempEntity);
+            counter++;
+            if (counter > 10) {
+                System.out.println("obstacleCheck() ERROR: INF loop ");
+                System.exit(0);
+            }
+        }
+    }
+
+
     public void move() {
+        color = Color.GREEN; // Set to green by defualt
+
         controlVector = getSlowdownVector();
-        calcVelocity();
+        calcVelocity(controlVector);
+        dir = Direction.getDir(velocity.dir);
+        obstacleCheck();
         position = position.add(velocity.dir);
         hitbox.updateMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
-        if (GameModel.checkAllCollisions(this)) {
+        if (GameModel.checkAllEntityCollisions(this) != null) {
             color = Color.RED;
-        } else {
-            color = Color.GREEN;
         }
         controlVector = new Vector(0,0);
     }
@@ -210,6 +270,7 @@ public class Entity {
     }
 
     public void render(Graphics2D g2d) {
+        if (image == null) return; // If no image defined, don't render
         AffineTransform affTrans = new AffineTransform();
         AffineTransform originalTransform = g2d.getTransform();
 
@@ -231,6 +292,7 @@ public class Entity {
         g2d.setTransform(originalTransform);
 
     }
+
 
     public void renderVelocity(Graphics2D g2d) {
         // Set color and thickness of the arrow
