@@ -1,15 +1,18 @@
-import TileMap.TileID;
-import TileMap.TileMapData;
+package Background;
 
+import GameObjects.Obstacle;
+import TileMap.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import DataFormats.*;
+import GameFiles.GameModel;
 
 public class BackgroundPanel {
-    static final int TILE_SIZE = 64;
+    public static final int TILE_SIZE = 64;
     static public TileMapData tileMapData = null;
     static public BufferedImage fullMap;
     static public BufferedImage fullMapAir; // Will overlap entities and hero
@@ -37,13 +40,13 @@ public class BackgroundPanel {
         loadBackgroundMap(tileMapData, new ArrayList[]{BackgroundMap.airbourne, BackgroundMap.decoration, BackgroundMap.obstacles, BackgroundMap.background});
         // tileMapData = TileMapData.readTileMapData("tileset");
         // assert tileMapData != null;
-        // loadBackgroundMap(tileMapData, BackgroundMap.map);
+        // loadBackgroundMap(tileMapData, Background.BackgroundMap.map);
         // tileMapData = TileMapData.readTileMapData("obstacles");
         // assert tileMapData != null;
-        // loadBackgroundMap(tileMapData, BackgroundMap.obstacles);
+        // loadBackgroundMap(tileMapData, Background.BackgroundMap.obstacles);
         // tileMapData = TileMapData.readTileMapData("decoration");
         // assert tileMapData != null;
-        // loadBackgroundMap(tileMapData, BackgroundMap.decoration);
+        // loadBackgroundMap(tileMapData, Background.BackgroundMap.decoration);
         height = tileMapData.tileshigh * TILE_SIZE;
         width = tileMapData.tileswide * TILE_SIZE;
 
@@ -110,6 +113,15 @@ public class BackgroundPanel {
         }
     }
 
+    /**
+     * Desc: This function will:
+     * <p>
+     * * use the tileData from the JSON file to draw the map based on each tileID,
+     * <p>
+     * * create all obstacles for each tile.
+     * @param tileData
+     * @param map
+     */
     public void loadBackgroundMap(TileMapData tileData, ArrayList<ArrayList<int[]>>[] map) {
         int rows = tileData.tileshigh;
         int cols = tileData.tileswide;
@@ -126,6 +138,21 @@ public class BackgroundPanel {
                     tempX = tileCor[0];
                     tempY = tileCor[1];
                     map[ii].get(yy).add(new int[]{tempX, tempY});
+
+                    // 2 variables for 2 different blockedAreas... EWWWW
+                    int counter = TileID.getTileBlockedAreaCount(tileNum);
+                    if (counter >= 2) {
+                        GameMatrix matrix = TileID.getTileBlockedArea2(tileNum);
+                        matrix = matrix.offset(xx, yy);
+                        Obstacle obst = GameModel.createObstacle(matrix);
+                        GameModel.allObstacles.add(obst);
+                    }
+                    if (counter >= 1) {
+                        GameMatrix matrix = TileID.getTileBlockedArea(tileNum);
+                        matrix = matrix.offset(xx, yy);
+                        Obstacle obst = GameModel.createObstacle(matrix);
+                        GameModel.allObstacles.add(obst);
+                    }
                 }
             }
         }

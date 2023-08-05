@@ -1,10 +1,14 @@
+package GameFiles;
+
+import GameObjects.Hero;
+
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
+import Background.*;
+import Utils.*;
 
 public class GamePanel extends JPanel implements ActionListener {
     public static GameModel model;
@@ -19,10 +23,9 @@ public class GamePanel extends JPanel implements ActionListener {
         model = new GameModel();
         field = new Field();
         mainGFX = new MainGraphics(this);
-        Matrix_hitbox MyMatrix = new Matrix_hitbox();
 
-        CameraView.target = null;
-        CameraView.goToTile(14,10);
+        // Background.CameraView.target = null;
+        // Background.CameraView.goToTile(14,10);
     }
 
     public void start() {
@@ -39,7 +42,7 @@ public class GamePanel extends JPanel implements ActionListener {
         mainGFX.renderAllEntities((Graphics2D) g);
         field.background.renderAir((Graphics2D) g);
 
-        GameModel.renderAllObstacles((Graphics2D) g);
+        // GameModel.renderAllObstacles((Graphics2D) g);
 
         // Make another function that renders the airbournes above the entities!!!!!
 

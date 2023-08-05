@@ -1,6 +1,12 @@
+package DataFormats;
+
+import GameObjects.Entity;
+import Enums.Direction;
 import org.ejml.simple.SimpleMatrix;
 
 import java.awt.*;
+
+import static Background.BackgroundPanel.TILE_SIZE;
 
 
 public class GameMatrix {
@@ -123,11 +129,24 @@ public class GameMatrix {
         matrix.set(3, yUp);
     }
 
+    public static GameMatrix updateMatrix(GameMatrix matrix, double xLeft, double xRight, double yDown, double yUp) {
+        GameMatrix tempMatrix = new GameMatrix(matrix);
+        tempMatrix.set(0, xLeft);
+        tempMatrix.set(1, xRight);
+        tempMatrix.set(2, yDown);
+        tempMatrix.set(3, yUp);
+        return tempMatrix;
+    }
+
 
     // Getters
     public double getXmin() {return this.matrix.get(0);}
     public double getXmax() {return this.matrix.get(1);}
+
+    /** @return min value from a DRAWING perspective. <br>(Lower value, further UP on the screen) */
     public double getYmin() {return this.matrix.get(2);}
+
+    /** @return max value from a DRAWING perspective. <br>(Higher value, further DOWN on the screen) */
     public double getYmax() {return this.matrix.get(3);}
 
 
@@ -138,6 +157,27 @@ public class GameMatrix {
     public void set(int index, double val) {
         this.matrix.set(index, val);
     }
+
+    /** Desc: Function will make a matrix that has been moved in
+     * x and y COORDINATE values while keeping its format
+     * @param x coordinate value
+     * @param y coordinate value
+     *
+     * @return Newly moved matrix */
+    public GameMatrix offset(double x, double y) {
+        GameMatrix tempMatrix = new GameMatrix(matrix);
+        tempMatrix.updateMatrix(tempMatrix.getXmin() + x, tempMatrix.getXmax() + x, tempMatrix.getYmin() + y, tempMatrix.getYmax() + y);
+        return tempMatrix;
+    }
+
+    /** Desc: Function will make a matrix that has been moved in
+     * x and y INDEX values while keeping its format
+     * @param x index value
+     * @param y index value
+     *
+     * @return Newly moved matrix */
+    public GameMatrix offset(int x, int y) {return offset((double) x * TILE_SIZE, (double) y * TILE_SIZE);}
+
 
     public GameMatrix plus(GameMatrix matrix) {
         GameMatrix tempMatrix = new GameMatrix(this.matrix);

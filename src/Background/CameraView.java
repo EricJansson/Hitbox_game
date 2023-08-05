@@ -1,3 +1,8 @@
+package Background;
+
+import DataFormats.*;
+import GameFiles.*;
+import GameObjects.*;
 
 public class CameraView {
     public static Vector position = new Vector(0,0);
@@ -15,7 +20,7 @@ public class CameraView {
 
     public static void followTarget() {
         if (target != null) {
-            double x = (double) (GameWindow.width/2) - (target.position.getX() + (double) target.width / 2);
+            double x = (double) (GameWindow.width /2) - (target.position.getX() + (double) target.width / 2);
             double y = (double) (GameWindow.height/2) - (target.position.getY() + (double) target.height / 2);
             setPos(x, y);
         }

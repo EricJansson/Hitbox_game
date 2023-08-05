@@ -1,5 +1,6 @@
-import TileMap.TileMapData;
-import TileMap.TileMapTile;
+package GameFiles;
+
+import GameFiles.GameWindow;
 
 public class MainGame {
     public static void main(String[] args) {

@@ -1,3 +1,7 @@
+package Enums;
+
+import DataFormats.*;
+
 public enum Direction {
     EAST,
     WEST,
@@ -11,10 +15,8 @@ public enum Direction {
     HORIZONTAL,
     NONE;
 
-
-
     public static Direction getAxisDir(Vector vector) {
-        Direction dir = Direction.NONE; // if this is returned => Vector is a dot
+        Direction dir = Direction.NONE; // if this is returned => DataFormats.Vector is a dot
         if (vector.getX() != 0) {
             dir = Direction.HORIZONTAL;
         } else if (vector.getY() != 0) {

@@ -1,17 +1,26 @@
-import javax.swing.*;
-import java.awt.*;
+package Utils;
+
+import Background.*;
+import DataFormats.*;
+import Enums.*;
+import GameFiles.*;
+import GameObjects.*;
+import TileMap.*;
+import Utils.*;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class WindowKeyListener implements KeyListener {
     int ii = 0;
-    static boolean space = false;
-    static boolean w = false;
-    static boolean a = false;
-    static boolean s = false;
-    static boolean d = false;
-    static boolean t = false;
-    static boolean y = false;
+    public static boolean space = false;
+    public static boolean w = false;
+    public static boolean a = false;
+    public static boolean s = false;
+    public static boolean d = false;
+    public static boolean t = false;
+    public static boolean y = false;
+    public static boolean p = false;
     private boolean spacePressed = false;
 
     public WindowKeyListener() {
@@ -42,6 +51,11 @@ public class WindowKeyListener implements KeyListener {
             y = true;
             CameraView.target = null;
             CameraView.goToTile(14,10);
+        } else if (keyCode == KeyEvent.VK_P) {  // Test
+            // Move background
+            p = true;
+            GamePanel.hero.getCurrentCoordinates();
+
         }
     }
 
@@ -72,6 +86,8 @@ public class WindowKeyListener implements KeyListener {
             t = false;
         } else if (keyCode == KeyEvent.VK_Y) {  // Test
             y = false;
+        } else if (keyCode == KeyEvent.VK_U) {  // Test
+            p = false;
         }
     }
 

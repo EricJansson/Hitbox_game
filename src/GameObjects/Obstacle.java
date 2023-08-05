@@ -1,8 +1,12 @@
+package GameObjects;
+
+import DataFormats.GameMatrix;
+
 import java.awt.*;
 
 public class Obstacle {
 
-    GameMatrix hitbox;
+    public GameMatrix hitbox;
     Color color = Color.magenta;
     public Obstacle(double xLeft, double xRight, double yDown, double yUp) {
         hitbox = new GameMatrix(xLeft, xRight, yDown, yUp);

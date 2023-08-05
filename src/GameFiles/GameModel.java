@@ -1,36 +1,25 @@
+package GameFiles;
+
 import java.awt.*;
 import java.util.ArrayList;
+import Background.*;
+import DataFormats.*;
+import GameObjects.*;
 
 public class GameModel {
     double HERO_X_COR = 516;
     double HERO_Y_COR = 320;
-    static ArrayList<Entity> allEntities = new ArrayList<>();
-    static ArrayList<Obstacle> allObstacles = new ArrayList<>();
+    public static ArrayList<Entity> allEntities = new ArrayList<>();
+    public static ArrayList<Obstacle> allObstacles = new ArrayList<>();
     public GameModel() {
-        // createEntity(100.0, 150.0, 50, 50);
-        // createEntity(700f, 300f, 50, 50);
+
         createEntity(1, 3, 50, 50, "slime3");
         createEntity(12, 7, 50, 50, "slime3");
-        // createEntity(9, 14, 50, 40, "bat");
+        createEntity(9, 14, 50, 40, "bat");
         createEntity(22, 10, 50, 50, "slime3");
-        // createEntity(16, 9, 150, 140);
-        createHero(10, 7, 100, 100);
+        createHero(14, 10, 50, 56);
 
-        createObstacle(1000, 1050, 500, 550);
-        createObstacle(950, 1000, 550, 650);
-        createObstacle(850, 900, 650, 650);
-        createObstacle(800, 900, 750, 750);
-
-        createObstacle(600, 650, 850, 850);
-        createObstacle(650, 700, 850, 850);
-        createObstacle(700, 750, 850, 850);
-        createObstacle(750, 800, 850, 850);
-        createObstacle(800, 850, 850, 850);
-
-        createObstacle(800, 800, 250, 350);
-        createObstacle(800, 800, 400, 450);
-        // createObstacle(Direction.VERTICAL, 200, 300, 400);
-        // CameraView.setTarget(GamePanel.hero);
+        CameraView.setTarget(GamePanel.hero);
     }
 
     public static void renderAllObstacles(Graphics2D g) {
@@ -43,7 +32,7 @@ public class GameModel {
         for (int i = 0; i< GameModel.allEntities.size(); i++) {
             GameModel.allEntities.get(i).update();
         }
-        // GamePanel.hero.printPos();
+        // GameFiles.GamePanel.hero.printPos();
     }
 
     /** By using the obstacle with the largest collision area,
@@ -69,7 +58,6 @@ public class GameModel {
         Obstacle collidingObstacle = null;
         for (Obstacle obst : allObstacles ) {
             if (entity.hitbox.collisionCheck(obst.hitbox)) {
-                System.out.println("Collision detected!!");
                 if (collidingObstacle != null) {
                     collidingObstacle = getClosestCollidingObstacle(entity, collidingObstacle, obst);
                 } else {
@@ -87,7 +75,6 @@ public class GameModel {
                 continue;
             }
             if (mainEntity.hitbox.collisionCheck(entity.hitbox)) {
-                System.out.println("Collision detected!!");
                 return entity;
             }
         }
@@ -134,7 +121,12 @@ public class GameModel {
 
     }
 
-    public Obstacle createObstacle(double xLeft, double xRight, double yDown, double yTop) {
+    public static Obstacle createObstacle(GameMatrix matrix) {
+        // getYmin() and getYmax() are confusing and needs a refactor.
+        // Is it min/max from a coordinate or drawing perspective?
+        return createObstacle(matrix.getXmin(), matrix.getXmax(), matrix.getYmin(), matrix.getYmax());
+    }
+    public static Obstacle createObstacle(double xLeft, double xRight, double yDown, double yTop) {
         Obstacle newObst = new Obstacle(xLeft, xRight, yDown, yTop);
         allObstacles.add(newObst);
         return newObst;

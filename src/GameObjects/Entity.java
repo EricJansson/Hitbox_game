@@ -1,8 +1,15 @@
+package GameObjects;
+
+import Background.Field;
+import Enums.Direction;
+import GameFiles.GameModel;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import DataFormats.*;
 
 
 public class Entity {
@@ -13,8 +20,11 @@ public class Entity {
     public Vector controlVector;
     public Direction dir = Direction.NONE;
     public Color color = Color.GREEN;
-    GameMatrix hitbox;
-    int width, height, borderSize, inset;
+    public GameMatrix hitbox;
+    public int width;
+    public int height;
+    int borderSize;
+    int inset;
     double angle = 0.0;
     final double ACCELERATION_CONST = 2.0;
     final double MAX_ACCELERATION = 7.0;
@@ -94,12 +104,9 @@ public class Entity {
             if (vectorAndDeltaXRatio == vectorAndDeltaYRatio) { // if hitting a corner...
                 if (Math.abs(velocity.dir.getX()) > Math.abs(velocity.dir.getY())) { // faster horizontal speed
                     vectorAndDeltaXRatio = vectorAndDeltaYRatio + 1;
-                    System.out.println("   Faster HORIZONTAL");
                 } else if (Math.abs(velocity.dir.getX()) < Math.abs(velocity.dir.getY())) { // faster vertical speed
                     vectorAndDeltaYRatio = vectorAndDeltaXRatio + 1;
-                    System.out.println("   Faster VERTICAL");
                 } else { // choose random wall to adjust to
-                    System.out.println("         RANDOM DIR (NOT GOOD)          ");
                     vectorAndDeltaXRatio = Math.random();
                     vectorAndDeltaYRatio = Math.random();
                 }
@@ -249,22 +256,8 @@ public class Entity {
     }
 
     public void printPos() {
-        String direction = "";
         System.out.printf("X: %.1f, Y: %.1f", position.getX(), position.getY());
-        if (velocity.dir.getY() > 0) {
-            direction += "South";
-        } else if (velocity.dir.getY() < 0) {
-            direction += "North";
-        }
-        if (velocity.dir.getX() > 0) {
-            direction += "East";
-        } else if (velocity.dir.getX() < 0) {
-            direction += "West";
-        }
-        if (direction.equals("")) {
-            direction = "None";
-        }
-        System.out.print(", Movement direction: " + direction);
+        System.out.print(", Movement direction: " + dir);
         System.out.printf(", Velocity Horizontal: %.1f, Vertical: %.1f\n", velocity.dir.getX(), velocity.dir.getY());
         // System.out.println(", Velocity Horizontal: " + velocity.getX() + ", Vertical: " + velocity.getY());
     }

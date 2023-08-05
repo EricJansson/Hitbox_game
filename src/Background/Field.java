@@ -1,7 +1,10 @@
+package Background;
+
+import Background.BackgroundPanel;
 
 public class Field {
-    static int width = 1000;
-    static int height = 624;
+    public static int width = 1000;
+    public static int height = 624;
     public BackgroundPanel background;
     public static final boolean HARDWALL = true;
     public Field() {

@@ -3,7 +3,7 @@
 
 ## Code
 
-### Entity.obstacleCheck()
+### GameObjects.Entity.obstacleCheck()
 
 #### Description
 

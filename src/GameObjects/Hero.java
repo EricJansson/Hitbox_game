@@ -1,7 +1,11 @@
-import javax.imageio.ImageIO;
+package GameObjects;
+
+import Utils.WindowKeyListener;
+
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import DataFormats.*;
+
+import static Background.BackgroundPanel.TILE_SIZE;
 
 public class Hero extends Entity {
     static final String IMG_FILE_NAME = "slime2";
@@ -53,6 +57,13 @@ public class Hero extends Entity {
         } else if (WindowKeyListener.w && !(WindowKeyListener.a || WindowKeyListener.s || WindowKeyListener.d)) {
             setSpeed('N', accBoostValue);
         }
+    }
+
+    public void getCurrentCoordinates() {
+        System.out.printf("X: %.1f, Y: %.1f", position.getX(), position.getY());
+        System.out.print(", Movement direction: " + dir);
+        System.out.printf(", Velocity Horizontal: %.1f, Vertical: %.1f\n", velocity.dir.getX(), velocity.dir.getY());
+        System.out.println("X-index: " + (int) (position.getX() / TILE_SIZE) + "   Y-index: " + (int) (position.getY() / TILE_SIZE));
     }
 
 }

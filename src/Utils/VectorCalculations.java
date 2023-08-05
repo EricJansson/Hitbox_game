@@ -1,3 +1,6 @@
+package Utils;
+import DataFormats.*;
+
 public class VectorCalculations {
 
     public static Vector findIntersectionPoint(Vector2D v1, Vector2D v2) {
@@ -5,7 +8,7 @@ public class VectorCalculations {
                 v2.pos.getX(), v2.pos.getY(), v2.pos.getX() + v2.dir.getX(), v2.pos.getY() + v2.dir.getY());
     }
     public static Vector findIntersectionPoint(double startX1, double startY1, double endX1, double endY1,
-                                        double startX2, double startY2, double endX2, double endY2) {
+                                               double startX2, double startY2, double endX2, double endY2) {
         double denominator = (startX1 - endX1) * (startY2 - endY2) - (startY1 - endY1) * (startX2 - endX2);
         if (denominator == 0) {
             System.out.println("Vectors are parallel.");

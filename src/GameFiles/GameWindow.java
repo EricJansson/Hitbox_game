@@ -1,10 +1,17 @@
+package GameFiles;
+
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
+import Background.*;
+import DataFormats.*;
+import Enums.*;
+import GameFiles.*;
+import GameObjects.*;
+import TileMap.*;
+import Utils.*;
 
 public class GameWindow extends JFrame {
-    static int width = 1200;
-    static int height = 800;
+    public static int width = 1200;
+    public static int height = 800;
     public GameWindow() {
         setTitle("Window Example");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

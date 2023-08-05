@@ -1,11 +1,15 @@
-import javax.swing.*;
-import javax.swing.border.Border;
+package GameFiles;
+
+import GameFiles.GameModel;
+import GameFiles.GamePanel;
+import GameFiles.GameWindow;
+
 import java.awt.*;
 
 public class MainGraphics {
     public static GamePanel gamePanel;
     public MainGraphics(GamePanel GP) {
-        // new CameraView();
+        // new Background.CameraView();
         gamePanel = GP;
         // Border border = BorderFactory.createLineBorder(Color.BLACK, 2);
         // GP.setBorder(border);

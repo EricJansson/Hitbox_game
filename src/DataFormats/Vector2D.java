@@ -1,4 +1,4 @@
-import java.awt.*;
+package DataFormats;
 
 public class Vector2D {
     public Vector pos;
