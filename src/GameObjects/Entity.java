@@ -2,6 +2,7 @@ package GameObjects;
 
 import Background.Field;
 import Enums.Direction;
+import Enums.MovementType;
 import GameFiles.GameModel;
 
 import javax.imageio.ImageIO;
@@ -9,11 +10,13 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import DataFormats.*;
 
 
 public class Entity {
     public BufferedImage image = null;
+    public MovementType[] movingType = new MovementType[]{MovementType.WALKING};
     static final String IMG_FILE_NAME = "slime3";
     public Vector position;
     public Vector2D velocity;
@@ -21,11 +24,11 @@ public class Entity {
     public Direction dir = Direction.NONE;
     public Color color = Color.GREEN;
     public GameMatrix hitbox;
+    public boolean newlySpawned;
     public int width;
     public int height;
     int borderSize;
     int inset;
-    double angle = 0.0;
     final double ACCELERATION_CONST = 2.0;
     final double MAX_ACCELERATION = 7.0;
     final double BRAKE_CONST = ACCELERATION_CONST;
@@ -49,6 +52,7 @@ public class Entity {
         hitbox = new GameMatrix(position.getX(), position.getX() + this.width, position.getY(), position.getY() + height);
         borderSize = 16;
         inset = borderSize / 2;
+        newlySpawned = true;
     }
 
     public double calcSlowdown(double vel) {
@@ -85,19 +89,46 @@ public class Entity {
         }
     }
 
+    public boolean spawnCollisionCheck(Obstacle obst) {
+        if (obst != null) { // if newlySpawned && collision -> ignore collision to avoid crash
+            return true;
+        }
+        System.out.println("No longer Spawn-Colliding.");
+        // if newlySpawned && no collision -> make it collide with obstacles like normal
+        newlySpawned = false;
+        return true;
+    }
 
-    public void obstacleCheck() {
+    public void obstacleCollisionCheck() {
         double deltaX, deltaY;
         int counter = 0;
-        Entity tempEntity = this;
+        Entity tempEntity = this.copy();
         Vector position = this.position.add(velocity.dir);
         tempEntity.hitbox.updateMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
 
-        Obstacle collidingObst = GameModel.checkAllObstacleCollisions(tempEntity);
+        // ArrayList<Obstacle> allObstacles = new ArrayList<>();
+        ArrayList<Obstacle> allObstacles = GameModel.createCollisionArrayList(tempEntity);
+        Obstacle collidingObst = Obstacle.getObstacleWithLargestCollision(allObstacles);
+
+
+
+        if (newlySpawned && spawnCollisionCheck(collidingObst)) return; // If newlySpawned => don't adapt to collision
+
         // Incase of colliding with multiple obstacles, a loop is needed
         while (collidingObst != null) {
-            deltaX = GameMatrix.getMatrixCollisionDeltaX(this, collidingObst.hitbox);
-            deltaY = GameMatrix.getMatrixCollisionDeltaY(this, collidingObst.hitbox);
+            // if matching movementType -> collision allowed (Skip calculations below)
+            if (MovementType.hasMatchingTypes(collidingObst.movingType, this.movingType)) {
+                System.out.println("Skip collision!");
+                collidingObst = Obstacle.getObstacleWithLargestCollision(allObstacles);
+                continue;
+            }
+
+            deltaX = GameMatrix.getMatrixCollisionDeltaX(tempEntity, collidingObst.hitbox);
+            deltaY = GameMatrix.getMatrixCollisionDeltaY(tempEntity, collidingObst.hitbox);
+            if (deltaX == 0 && deltaY == 0) {
+                collidingObst = Obstacle.getObstacleWithLargestCollision(allObstacles);
+                continue;
+            }
             double vectorAndDeltaXRatio = Math.abs(deltaX / velocity.dir.getX());
             double vectorAndDeltaYRatio = Math.abs(deltaY / velocity.dir.getY());
 
@@ -118,7 +149,7 @@ public class Entity {
                 } else if (dir == Direction.SOUTHWEST || dir == Direction.WEST || dir == Direction.NORTHWEST) {
                     velocity.dir.setX(velocity.dir.getX() + deltaX);
                 }
-            } else { // else if (vectorAndDeltaXRatio > vectorAndDeltaYRatio)
+            } else if (vectorAndDeltaXRatio > vectorAndDeltaYRatio) {
                 if (dir == Direction.SOUTHWEST || dir == Direction.SOUTH || dir == Direction.SOUTHEAST) {
                     velocity.dir.setY(velocity.dir.getY() - deltaY);
                 } else if (dir == Direction.NORTHWEST || dir == Direction.NORTH || dir == Direction.NORTHEAST) {
@@ -126,11 +157,11 @@ public class Entity {
                 }
             }
             position = this.position.add(velocity.dir);
-            tempEntity = this;
+            tempEntity = this.copy();
             tempEntity.hitbox.updateMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
-            collidingObst = GameModel.checkAllObstacleCollisions(tempEntity);
+            collidingObst = Obstacle.getObstacleWithLargestCollision(allObstacles);
             counter++;
-            if (counter > 10) {
+            if (counter > 20) {
                 System.out.println("obstacleCheck() ERROR: INF loop ");
                 System.exit(0);
             }
@@ -144,7 +175,7 @@ public class Entity {
         controlVector = getSlowdownVector();
         calcVelocity(controlVector);
         dir = Direction.getDir(velocity.dir);
-        obstacleCheck();
+        obstacleCollisionCheck();
         position = position.add(velocity.dir);
         hitbox.updateMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
         if (GameModel.checkAllEntityCollisions(this) != null) {
@@ -315,6 +346,14 @@ public class Entity {
         g2d.drawLine(arrowHeadX, arrowHeadY, arrowEndX2, arrowEndY2);
     }
 
+    public Entity copy() {
+        Entity temp = new Entity(position.getX(), position.getY(), width, height);
+        temp.velocity.dir.setX(this.velocity.dir.getX());
+        temp.velocity.dir.setY(this.velocity.dir.getY());
+        temp.image = this.image;
+        temp.dir = this.dir;
+        return temp;
+    }
 
     public BufferedImage getImage() { return image; }
 

@@ -83,11 +83,20 @@ public class GamePanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
-        if (arg0.getSource() == timer) {
+        if (arg0.getSource() == timer && !WindowKeyListener.paused) {
             checkControls();
             updateModel();
             repaint();
+        } else {
+            if (WindowKeyListener.n) {
+                WindowKeyListener.n = false;
+                System.out.println("          ~~   Next frame   ~~");
+                checkControls();
+                updateModel();
+                repaint();
+            }
         }
+
     }
 
 

@@ -25,6 +25,7 @@ public class GameWindow extends JFrame {
         width = getSize().width;
         height = getSize().height;
         GamePanel gamePanel = new GamePanel();
+        WindowKeyListener.gamePanel = gamePanel;
         add(gamePanel);
         System.out.print("Window size: ");
         System.out.println(getSize());

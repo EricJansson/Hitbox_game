@@ -8,7 +8,7 @@ import DataFormats.*;
 import static Background.BackgroundPanel.TILE_SIZE;
 
 public class Hero extends Entity {
-    static final String IMG_FILE_NAME = "slime2";
+    static final String IMG_FILE_NAME = "slime";
     public static final int WIDTH = 50;
     public static final int HEIGHT = 50;
 

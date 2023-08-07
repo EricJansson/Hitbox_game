@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class WindowKeyListener implements KeyListener {
+    public static GamePanel gamePanel;
     int ii = 0;
     public static boolean space = false;
     public static boolean w = false;
@@ -21,7 +22,12 @@ public class WindowKeyListener implements KeyListener {
     public static boolean t = false;
     public static boolean y = false;
     public static boolean p = false;
+    public static boolean l = false;
+    public static boolean n = false;
+    public static boolean f = false;
+    public static boolean nPressed = false;
     private boolean spacePressed = false;
+    public static boolean paused = false;
 
     public WindowKeyListener() {
 
@@ -51,11 +57,16 @@ public class WindowKeyListener implements KeyListener {
             y = true;
             CameraView.target = null;
             CameraView.goToTile(14,10);
-        } else if (keyCode == KeyEvent.VK_P) {  // Test
+        } else if (keyCode == KeyEvent.VK_L) {  // Get hero coords
             // Move background
-            p = true;
+            l = true;
             GamePanel.hero.getCurrentCoordinates();
-
+        } else if (keyCode == KeyEvent.VK_P) {  // Pause timer
+            p = true;
+            paused = !paused;
+        } else if (keyCode == KeyEvent.VK_F) {  // Pause timer
+            f = true;
+            GamePanel.hero.movingType = new MovementType[]{ MovementType.FLYING };
         }
     }
 
@@ -66,6 +77,11 @@ public class WindowKeyListener implements KeyListener {
             spacePressed = true;
             space = true;
             System.out.println("Space pressed!");
+        }
+        if (keyChar == 'n' && !nPressed) {
+            nPressed = true;
+            n = true;
+            System.out.println("N pressed!");
         }
     }
 
@@ -88,6 +104,13 @@ public class WindowKeyListener implements KeyListener {
             y = false;
         } else if (keyCode == KeyEvent.VK_U) {  // Test
             p = false;
+        } else if (keyCode == KeyEvent.VK_L) {  // Test
+            l = false;
+        } else if (keyCode == KeyEvent.VK_N) {  // Test
+            nPressed = false;
+            System.out.println("N Released!");
+        } else if (keyCode == KeyEvent.VK_F) {  // Test
+            f = false;
         }
     }
 

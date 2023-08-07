@@ -1,17 +1,29 @@
 package GameObjects;
 
 import DataFormats.GameMatrix;
+import Enums.MovementType;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Obstacle {
 
     public GameMatrix hitbox;
     Color color = Color.magenta;
-    public Obstacle(double xLeft, double xRight, double yDown, double yUp) {
+    public MovementType[] movingType;
+
+    public Obstacle(MovementType[] movingType, double xLeft, double xRight, double yDown, double yUp) {
+        this.movingType = movingType;
         hitbox = new GameMatrix(xLeft, xRight, yDown, yUp);
     }
 
+    public static Obstacle getObstacleWithLargestCollision(ArrayList<Obstacle> list) {
+        if (list.size() == 0) {
+            return null;
+        }
+        return list.remove(list.size()-1);
+    }
 
     public void drawHitbox(Graphics2D g2d) {
         int inset = 8;

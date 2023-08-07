@@ -2,8 +2,11 @@ package GameFiles;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import Background.*;
 import DataFormats.*;
+import Enums.MovementType;
 import GameObjects.*;
 
 public class GameModel {
@@ -13,20 +16,18 @@ public class GameModel {
     public static ArrayList<Obstacle> allObstacles = new ArrayList<>();
     public GameModel() {
 
-        createEntity(1, 3, 50, 50, "slime3");
-        createEntity(12, 7, 50, 50, "slime3");
-        createEntity(9, 14, 50, 40, "bat");
-        createEntity(22, 10, 50, 50, "slime3");
-        createHero(14, 10, 50, 56);
+        createEntity(1, 5, 50, 50, "slime3");
+        createEntity(10, 28, 50, 50, "slime3");
+        createEntity(11, 3, 50, 50, "slime3");
+        createEntity(12, 10, 50, 50, "slime3");
+        createEntity(22, 23, 50, 40, "bat");
+        createEntity(33, 15, 50, 40, "bat");
+        createEntity(22, 7, 50, 50, "slime3");
+        createHero(24, 10, 50, 56);
 
         CameraView.setTarget(GamePanel.hero);
     }
 
-    public static void renderAllObstacles(Graphics2D g) {
-        for (Obstacle obstacle : allObstacles) {
-            obstacle.drawHitbox(g);
-        }
-    }
 
     public void updateEntities() {
         for (int i = 0; i< GameModel.allEntities.size(); i++) {
@@ -35,38 +36,40 @@ public class GameModel {
         // GameFiles.GamePanel.hero.printPos();
     }
 
-    /** By using the obstacle with the largest collision area,
-     * it will prioritize the collision adaptation to that entity first. */
-    public static Obstacle getClosestCollidingObstacle(Entity entity, Obstacle obst1, Obstacle obst2) {
-        Obstacle largestCollisionObstacle = obst1; // Init with obst1 for simpler return
-        double deltaX1 = GameMatrix.getMatrixCollisionDeltaX(entity, obst1.hitbox);
-        double deltaY1 = GameMatrix.getMatrixCollisionDeltaY(entity, obst1.hitbox);
-        double area1 = deltaX1 * deltaY1;
-
-        double deltaX2 = GameMatrix.getMatrixCollisionDeltaX(entity, obst2.hitbox);
-        double deltaY2 = GameMatrix.getMatrixCollisionDeltaY(entity, obst2.hitbox);
-        double area2 = deltaX2 * deltaY2;
-        if (area1 < area2) {
-            largestCollisionObstacle = obst2;
-        }
-        return largestCollisionObstacle;
+    public static double getCollidingArea(Entity entity, Obstacle obst) {
+        double deltaX = GameMatrix.getMatrixCollisionDeltaX(entity, obst.hitbox);
+        double deltaY = GameMatrix.getMatrixCollisionDeltaY(entity, obst.hitbox);
+        return deltaX * deltaY;
     }
 
-    /** Will find the obstacle with the largest collision area to the entity used as parameter.
-     * Returns null of no collision is found. */
-    public static Obstacle checkAllObstacleCollisions(Entity entity) {
-        Obstacle collidingObstacle = null;
-        for (Obstacle obst : allObstacles ) {
-            if (entity.hitbox.collisionCheck(obst.hitbox)) {
-                if (collidingObstacle != null) {
-                    collidingObstacle = getClosestCollidingObstacle(entity, collidingObstacle, obst);
-                } else {
-                    collidingObstacle = obst;
-                }
+    /**
+     * Desc: Adds obstacle in the correct order
+     * in the list based on the collision area
+     */
+    public static void addToSortedArrayList(ArrayList<Obstacle> list, Entity entity, Obstacle obst) {
+        double obstToAddArea = getCollidingArea(entity, obst);
+        for (int i = 0; i < list.size(); i++) {
+            double listItemArea = getCollidingArea(entity, list.get(i));
+            if (obstToAddArea < listItemArea) {
+                list.add(i, obst);
+                return;
             }
         }
-        return collidingObstacle;
+        list.add(obst);
     }
+
+    /** Desc: Creates an ArrayList with obstacles in area sorted order
+     * (largest collision area last) */
+    public static ArrayList<Obstacle> createCollisionArrayList(Entity entity) {
+        ArrayList<Obstacle> obstList = new ArrayList<>();
+        for (Obstacle obst : allObstacles ) {
+            if (entity.hitbox.collisionCheck(obst.hitbox)) {
+                addToSortedArrayList(obstList, entity, obst);
+            }
+        }
+        return obstList;
+    }
+
 
 
     public static Entity checkAllEntityCollisions(Entity mainEntity) {
@@ -117,19 +120,13 @@ public class GameModel {
         return entity;
     }
 
-    public void addEntity() {
-
-    }
-
-    public static Obstacle createObstacle(GameMatrix matrix) {
+    public static Obstacle createObstacle(MovementType[] movingType, GameMatrix matrix) {
         // getYmin() and getYmax() are confusing and needs a refactor.
         // Is it min/max from a coordinate or drawing perspective?
-        return createObstacle(matrix.getXmin(), matrix.getXmax(), matrix.getYmin(), matrix.getYmax());
+        return createObstacle(movingType, matrix.getXmin(), matrix.getXmax(), matrix.getYmin(), matrix.getYmax());
     }
-    public static Obstacle createObstacle(double xLeft, double xRight, double yDown, double yTop) {
-        Obstacle newObst = new Obstacle(xLeft, xRight, yDown, yTop);
-        allObstacles.add(newObst);
-        return newObst;
+    public static Obstacle createObstacle(MovementType[] movingType, double xLeft, double xRight, double yDown, double yTop) {
+        return new Obstacle(movingType, xLeft, xRight, yDown, yTop);
     }
 
 }

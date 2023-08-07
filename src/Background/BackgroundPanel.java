@@ -12,7 +12,7 @@ import DataFormats.*;
 import GameFiles.GameModel;
 
 public class BackgroundPanel {
-    public static final int TILE_SIZE = 64;
+    public static final int TILE_SIZE = 64; // 64 default
     static public TileMapData tileMapData = null;
     static public BufferedImage fullMap;
     static public BufferedImage fullMapAir; // Will overlap entities and hero
@@ -25,6 +25,7 @@ public class BackgroundPanel {
     static final String FILE_NAME_OBSTACLE = "Layer_2_Obstacle";
     static final String FILE_NAME_DECORATION = "Layer_3_Decoration";
     static final String FILE_NAME_AIRBOURNE = "Layer_3_Decoration";
+    static final String TILE_MAP_DATA_FILE = "fullTileset";
     static public Vector position;
     static public int height;
     static public int width;
@@ -35,18 +36,9 @@ public class BackgroundPanel {
         imgObstacle = setImage(FILE_NAME_OBSTACLE);
         imgDecoration = setImage(FILE_NAME_DECORATION);
         tileMapData = new TileMapData();
-        tileMapData = TileMapData.readTileMapData("fullTileset");
+        tileMapData = TileMapData.readTileMapData(TILE_MAP_DATA_FILE);
         assert tileMapData != null;
         loadBackgroundMap(tileMapData, new ArrayList[]{BackgroundMap.airbourne, BackgroundMap.decoration, BackgroundMap.obstacles, BackgroundMap.background});
-        // tileMapData = TileMapData.readTileMapData("tileset");
-        // assert tileMapData != null;
-        // loadBackgroundMap(tileMapData, Background.BackgroundMap.map);
-        // tileMapData = TileMapData.readTileMapData("obstacles");
-        // assert tileMapData != null;
-        // loadBackgroundMap(tileMapData, Background.BackgroundMap.obstacles);
-        // tileMapData = TileMapData.readTileMapData("decoration");
-        // assert tileMapData != null;
-        // loadBackgroundMap(tileMapData, Background.BackgroundMap.decoration);
         height = tileMapData.tileshigh * TILE_SIZE;
         width = tileMapData.tileswide * TILE_SIZE;
 
@@ -91,8 +83,16 @@ public class BackgroundPanel {
         }
     }
 
+
+    public static void renderAllObstacles(Graphics2D g) {
+        for (Obstacle obstacle : GameModel.allObstacles) {
+            obstacle.drawHitbox(g);
+        }
+    }
+
     public void paintMap(Graphics2D g2d, BufferedImage imgTileset, ArrayList<ArrayList<int[]>> layer) {
         displayLayer(g2d, imgTileset, layer);
+        // renderAllObstacles(g2d);
     }
 
     public void loadBackgroundMap(TileMapData tileData, ArrayList<ArrayList<int[]>> map) {
@@ -144,13 +144,13 @@ public class BackgroundPanel {
                     if (counter >= 2) {
                         GameMatrix matrix = TileID.getTileBlockedArea2(tileNum);
                         matrix = matrix.offset(xx, yy);
-                        Obstacle obst = GameModel.createObstacle(matrix);
+                        Obstacle obst = GameModel.createObstacle(TileID.getMovingType(tileNum), matrix);
                         GameModel.allObstacles.add(obst);
                     }
                     if (counter >= 1) {
                         GameMatrix matrix = TileID.getTileBlockedArea(tileNum);
                         matrix = matrix.offset(xx, yy);
-                        Obstacle obst = GameModel.createObstacle(matrix);
+                        Obstacle obst = GameModel.createObstacle(TileID.getMovingType(tileNum), matrix);
                         GameModel.allObstacles.add(obst);
                     }
                 }
