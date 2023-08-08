@@ -1,13 +1,12 @@
 package GameFiles;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import Background.*;
 import DataFormats.*;
 import Enums.MovementType;
-import GameObjects.*;
+import MapObjects.*;
+import MapObjects.AllEntities.*;
 
 public class GameModel {
     double HERO_X_COR = 516;
@@ -15,15 +14,14 @@ public class GameModel {
     public static ArrayList<Entity> allEntities = new ArrayList<>();
     public static ArrayList<Obstacle> allObstacles = new ArrayList<>();
     public GameModel() {
-
-        createEntity(1, 5, 50, 50, "slime3");
-        createEntity(10, 28, 50, 50, "slime3");
-        createEntity(11, 3, 50, 50, "slime3");
-        createEntity(12, 10, 50, 50, "slime3");
-        createEntity(22, 23, 50, 40, "bat");
-        createEntity(33, 15, 50, 40, "bat");
-        createEntity(22, 7, 50, 50, "slime3");
-        createHero(24, 10, 50, 56);
+        addEntity(1, 5, "RedSlime");
+        addEntity(10, 28, "RedSlime");
+        addEntity(11, 3, "RedSlime");
+        addEntity(12, 10, "RedSlime");
+        addEntity(22, 23, "Bat");
+        addEntity(33, 15, "Bat");
+        addEntity(22, 7, "RedSlime");
+        createHero(24, 10);
 
         CameraView.setTarget(GamePanel.hero);
     }
@@ -70,8 +68,6 @@ public class GameModel {
         return obstList;
     }
 
-
-
     public static Entity checkAllEntityCollisions(Entity mainEntity) {
         for (Entity entity : allEntities ) {
             if (entity == mainEntity) {
@@ -90,35 +86,43 @@ public class GameModel {
         GamePanel.hero = hero;
     }
 
-    public void createHero(int xIndex, int yIndex) {createHero(xIndex,yIndex, Hero.WIDTH, Hero.HEIGHT);}
-    public void createHero(int xIndex, int yIndex, int width, int height) {
-        int offsetX = (BackgroundPanel.TILE_SIZE / 2) - (width / 2);
-        int offsetY = (BackgroundPanel.TILE_SIZE / 2) - (height / 2);
-        int x = (BackgroundPanel.TILE_SIZE * xIndex) + offsetX;
-        int y = (BackgroundPanel.TILE_SIZE * yIndex) + offsetY;;
-        Hero hero = new Hero(x, y, width, height);
-        allEntities.add(hero);
-        GamePanel.hero = hero;
+    public void createHero(int xIndex, int yIndex) {
+        double x = (BackgroundPanel.TILE_SIZE * xIndex);
+        double y = (BackgroundPanel.TILE_SIZE * yIndex);
+        createHero(x, y);
     }
 
-    public Entity createEntity(int xIndex, int yIndex, int width, int height) { return createEntity(xIndex, yIndex, width, height, null); }
-    public Entity createEntity(Vector coordinates, int width, int height, String name) { return createEntity(coordinates.getX(), coordinates.getY(), width, height, name); }
 
-    public Entity createEntity(double xCor, double yCor, int width, int height, String name) {
-        Entity entity = new Entity(xCor, yCor, width, height, name);
-        allEntities.add(entity);
-        return entity;
+    public Entity createEntity(Vector coordinates, String name) {
+        return createEntity(coordinates.getX(), coordinates.getY(), name);
+    }
+    public static Entity createEntity(double xCor, double yCor, String name) {
+        Entity newEntity;
+        if ("Bat".equalsIgnoreCase(name)) {
+            newEntity = new Bat(xCor ,yCor);
+        } else if ("RedSlime".equalsIgnoreCase(name)) {
+            newEntity = new RedSlime(xCor, yCor);
+        } else if ("MapObjects.Hero".equalsIgnoreCase(name)) {
+            newEntity = new Hero(xCor, yCor);
+        } else {
+            throw new IllegalArgumentException("Invalid entity type: " + name);
+        }
+        return newEntity;
     }
 
-    public Entity createEntity(int xIndex, int yIndex, int width, int height, String name) {
-        int offsetX = (BackgroundPanel.TILE_SIZE / 2) - (width / 2);
-        int offsetY = (BackgroundPanel.TILE_SIZE / 2) - (height / 2);
-        int x = (BackgroundPanel.TILE_SIZE * xIndex) + offsetX;
-        int y = (BackgroundPanel.TILE_SIZE * yIndex) + offsetY;;
-        Entity entity = new Entity(x, y, width, height, name);
-        allEntities.add(entity);
-        return entity;
+    public void addEntity(Vector coordinates, String name) {
+        addEntity(coordinates.getX(), coordinates.getY(), name);
     }
+    public void addEntity(int xIndex, int yIndex, String name) {
+        double x = (BackgroundPanel.TILE_SIZE * xIndex);
+        double y = (BackgroundPanel.TILE_SIZE * yIndex);
+        addEntity(x, y, name);
+    }
+    public void addEntity(double xCor, double yCor, String name) {
+        Entity newEntity = createEntity(xCor, yCor, name);
+        allEntities.add(newEntity);
+    }
+
 
     public static Obstacle createObstacle(MovementType[] movingType, GameMatrix matrix) {
         // getYmin() and getYmax() are confusing and needs a refactor.

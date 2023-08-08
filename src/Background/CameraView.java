@@ -2,7 +2,7 @@ package Background;
 
 import DataFormats.*;
 import GameFiles.*;
-import GameObjects.*;
+import MapObjects.*;
 
 public class CameraView {
     public static Vector position = new Vector(0,0);

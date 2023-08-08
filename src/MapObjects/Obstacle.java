@@ -1,11 +1,10 @@
-package GameObjects;
+package MapObjects;
 
 import DataFormats.GameMatrix;
 import Enums.MovementType;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Obstacle {
 

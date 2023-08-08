@@ -1,6 +1,6 @@
 package GameFiles;
 
-import GameObjects.Hero;
+import MapObjects.Hero;
 
 import javax.swing.*;
 import java.awt.*;

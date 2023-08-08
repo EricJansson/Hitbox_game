@@ -1,6 +1,6 @@
 package Background;
 
-import GameObjects.Obstacle;
+import MapObjects.Obstacle;
 import TileMap.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -168,9 +168,9 @@ public class BackgroundPanel {
     private BufferedImage setImage(String filename, String fileExtension) {
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new File(".\\src\\assets\\" + filename + "." + fileExtension));
+            image = ImageIO.read(new File(".\\src\\assets\\BackgroundFiles\\" + filename + "." + fileExtension));
         } catch (Exception e) {
-            System.out.println("setImage() Couldn't read file: " + ".\\src\\assets\\" + filename + "." + fileExtension);
+            System.out.println("setImage() Couldn't read file: " + ".\\src\\assets\\BackgroundFiles\\" + filename + "." + fileExtension);
             e.printStackTrace();
             System.exit(0);
         }

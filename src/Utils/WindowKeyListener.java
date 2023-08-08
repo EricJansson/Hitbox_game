@@ -1,12 +1,8 @@
 package Utils;
 
 import Background.*;
-import DataFormats.*;
 import Enums.*;
 import GameFiles.*;
-import GameObjects.*;
-import TileMap.*;
-import Utils.*;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -66,7 +62,16 @@ public class WindowKeyListener implements KeyListener {
             paused = !paused;
         } else if (keyCode == KeyEvent.VK_F) {  // Pause timer
             f = true;
-            GamePanel.hero.movingType = new MovementType[]{ MovementType.FLYING };
+            if (GamePanel.hero.movingType[0] == MovementType.WALKING) {
+                GamePanel.hero.movingType = new MovementType[]{ MovementType.SWIMMING };
+                System.out.println("You can now SWIM!");
+            } else if (GamePanel.hero.movingType[0] == MovementType.SWIMMING) {
+                GamePanel.hero.movingType = new MovementType[]{ MovementType.FLYING };
+                System.out.println("You can now FLY!");
+            } else if (GamePanel.hero.movingType[0] == MovementType.FLYING) {
+                GamePanel.hero.movingType = new MovementType[]{ MovementType.WALKING };
+                System.out.println("You can now WALK!");
+            }
         }
     }
 

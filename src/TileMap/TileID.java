@@ -81,8 +81,8 @@ public enum TileID {
     T109(new int[]{4, 7}, new MovementType[]{}, new GameMatrix(0, TILE_SIZE, 0, 0), new GameMatrix(TILE_SIZE, TILE_SIZE, 0, TILE_SIZE)),
     T110(new int[]{5, 7}, new MovementType[]{}, new GameMatrix(0, TILE_SIZE, 0, 0), new GameMatrix(0, 0, 0, TILE_SIZE)),
     T111(new int[]{6, 5}, new MovementType[]{MovementType.SWIMMING, MovementType.FLYING}, new GameMatrix(0, TILE_SIZE, 0, TILE_SIZE)), //  or {7, 5} or {8, 5}
-    T112(new int[]{3, 5}, new MovementType[]{MovementType.SWIMMING, MovementType.FLYING}, new GameMatrix(0, TILE_SIZE, 0, TILE_SIZE)),
-    T113(new int[]{4, 5}, new MovementType[]{MovementType.SWIMMING, MovementType.FLYING}, new GameMatrix(0, TILE_SIZE, 0, TILE_SIZE)),
+    T112(new int[]{3, 5}, new MovementType[]{MovementType.SWIMMING}, new GameMatrix(0, TILE_SIZE, 0, TILE_SIZE)),
+    T113(new int[]{4, 5}, new MovementType[]{MovementType.SWIMMING}, new GameMatrix(0, TILE_SIZE, 0, TILE_SIZE)),
     T114(new int[]{6, 7}),
     T115(new int[]{7, 7}),
     T117(new int[]{4, 3}, new MovementType[]{}, new GameMatrix(0, TILE_SIZE, 0, TILE_SIZE - ((double) TILE_SIZE / 8))),

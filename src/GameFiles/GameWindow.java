@@ -1,12 +1,7 @@
 package GameFiles;
 
 import javax.swing.*;
-import Background.*;
-import DataFormats.*;
-import Enums.*;
-import GameFiles.*;
-import GameObjects.*;
-import TileMap.*;
+
 import Utils.*;
 
 public class GameWindow extends JFrame {

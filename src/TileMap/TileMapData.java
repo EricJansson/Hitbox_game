@@ -21,7 +21,7 @@ public class TileMapData {
     public static TileMapData readTileMapData(String fileName) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            TileMapData tileMapData = objectMapper.readValue(new File(".\\src\\assets\\" + fileName + ".json"), TileMapData.class);
+            TileMapData tileMapData = objectMapper.readValue(new File(".\\src\\assets\\BackgroundFiles\\" + fileName + ".json"), TileMapData.class);
             System.out.println();
             return tileMapData;
         } catch (IOException e) {

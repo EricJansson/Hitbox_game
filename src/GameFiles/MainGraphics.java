@@ -21,9 +21,9 @@ public class MainGraphics {
 
     public void renderAllEntities(Graphics2D g2d) {
         for (int i = 0; i< GameModel.allEntities.size(); i++) {
-            GameModel.allEntities.get(i).drawHitbox(g2d);
-            GameModel.allEntities.get(i).render(g2d);
-            GameModel.allEntities.get(i).renderVelocity(g2d);
+            GameModel.allEntities.get(i).renderer.drawHitbox(g2d);
+            GameModel.allEntities.get(i).renderer.render(g2d);
+            GameModel.allEntities.get(i).renderer.renderVelocity(g2d);
         }
     }
 

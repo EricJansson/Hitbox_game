@@ -1,4 +1,4 @@
-package GameObjects;
+package MapObjects;
 
 import Background.Field;
 import Enums.Direction;
@@ -14,65 +14,68 @@ import java.util.ArrayList;
 import DataFormats.*;
 
 
-public class Entity {
-    public BufferedImage image = null;
+public abstract class Entity {
     public MovementType[] movingType = new MovementType[]{MovementType.WALKING};
-    static final String IMG_FILE_NAME = "slime3";
+    public String IMG_FILE_NAME;
     public Vector position;
     public Vector2D velocity;
     public Vector controlVector;
     public Direction dir = Direction.NONE;
-    public Color color = Color.GREEN;
     public GameMatrix hitbox;
+    public BufferedImage image = null;
     public boolean newlySpawned;
     public int width;
     public int height;
-    int borderSize;
-    int inset;
-    final double ACCELERATION_CONST = 2.0;
-    final double MAX_ACCELERATION = 7.0;
-    final double BRAKE_CONST = ACCELERATION_CONST;
+    public int imageOffsetX;
+    public int imageOffsetY;
+    public double acceleration_val = 2.0;
+    public double max_acc = 7.0;
+    public double brake_val = acceleration_val;
+    public EntityRenderer renderer;
 
-    public Entity() {this(50f, 50f, 50, 50);}
-    public Entity(double xCor, double yCor) {this(xCor, yCor, 50, 50, null);}
-    public Entity(double xCor, double yCor, int width, int height) {this(xCor, yCor, width, height, null);}
+    public Entity(int width, int height) {
+        renderer = new EntityRenderer(this);
+        this.width = width;
+        this.height = height;
+        newlySpawned = true;
+    }
+
     public Entity(double xCor, double yCor, int width, int height, String imageName) {
         position = new Vector(xCor, yCor);
         velocity = new Vector2D(0.0, 0.0, xCor, yCor);
         if(image == null && imageName != null) {
             try {
-                image = ImageIO.read(new File(".\\src\\assets\\" + imageName + ".png"));
+                image = ImageIO.read(new File(".\\src\\assets\\EntityImages\\" + imageName + ".png"));
             } catch (Exception e) {
-                System.out.println("Error!");
+                System.out.println("Entity() init Error!");
                 e.printStackTrace();
             }
         }
+        renderer = new EntityRenderer(this);
         this.width = width;
         this.height = height;
         hitbox = new GameMatrix(position.getX(), position.getX() + this.width, position.getY(), position.getY() + height);
-        borderSize = 16;
-        inset = borderSize / 2;
         newlySpawned = true;
     }
 
     public double calcSlowdown(double vel) {
         // Maybe do something less linear as a slowdown formula
-        if (Math.abs(vel) > MAX_ACCELERATION + Math.abs(vel)) {
-            return BRAKE_CONST * 4;
+        if (Math.abs(vel) > max_acc + Math.abs(vel)) {
+            return brake_val * 4;
         }
-        return BRAKE_CONST;
+        return brake_val;
     }
 
     public Vector getSlowdownVector() {
         Vector vector = new Vector(0,0);
-        if (velocity.dir.getX() >= BRAKE_CONST) {
+        if (velocity.dir.getX() >= brake_val) {
             vector.setX(-calcSlowdown(velocity.dir.getX()));
-        } else if (velocity.dir.getX() <= -BRAKE_CONST) {
+        } else if (velocity.dir.getX() <= -brake_val) {
             vector.setX(calcSlowdown(velocity.dir.getX()));
         }
-        if (velocity.dir.getY() >= BRAKE_CONST) {
+        if (velocity.dir.getY() >= brake_val) {
             vector.setY(-calcSlowdown(velocity.dir.getY()));
-        } else if (velocity.dir.getY() <= -BRAKE_CONST) {
+        } else if (velocity.dir.getY() <= -brake_val) {
             vector.setY(calcSlowdown(velocity.dir.getY()));
         }
         return vector;
@@ -81,10 +84,10 @@ public class Entity {
 
     public void calcVelocity(Vector vector) {
         velocity.dir = velocity.dir.add(vector);
-        if (velocity.dir.getY() < BRAKE_CONST && velocity.dir.getY() > -BRAKE_CONST) {  // if speed is VERY low => set to 0
+        if (velocity.dir.getY() < brake_val && velocity.dir.getY() > -brake_val) {  // if speed is VERY low => set to 0
             velocity.dir.setY(0);
         }
-        if (velocity.dir.getX() < BRAKE_CONST && velocity.dir.getX() > -BRAKE_CONST) {
+        if (velocity.dir.getX() < brake_val && velocity.dir.getX() > -brake_val) {
             velocity.dir.setX(0);
         }
     }
@@ -170,7 +173,7 @@ public class Entity {
 
 
     public void move() {
-        color = Color.GREEN; // Set to green by defualt
+        renderer.color = Color.GREEN; // Set to green by defualt
 
         controlVector = getSlowdownVector();
         calcVelocity(controlVector);
@@ -179,7 +182,7 @@ public class Entity {
         position = position.add(velocity.dir);
         hitbox.updateMatrix(position.getX(), position.getX() + width, position.getY(), position.getY() + height);
         if (GameModel.checkAllEntityCollisions(this) != null) {
-            color = Color.RED;
+            renderer.color = Color.RED;
         }
         controlVector = new Vector(0,0);
     }
@@ -197,14 +200,14 @@ public class Entity {
 
     public void accelerate(char dir) {
         // Since slowdown always run, this won't force it to adapt to acceleration
-        double acc = ACCELERATION_CONST + BRAKE_CONST;
+        double acc = acceleration_val + brake_val;
         if (dir == 'W' || dir == 'E') {
-            if ( (Math.abs(velocity.dir.getX()) + acc) > MAX_ACCELERATION ) {
-                acc = MAX_ACCELERATION + BRAKE_CONST - Math.abs(velocity.dir.getX());
+            if ( (Math.abs(velocity.dir.getX()) + acc) > max_acc ) {
+                acc = max_acc + brake_val - Math.abs(velocity.dir.getX());
             }
         } else if (dir == 'N' || dir == 'S') {
-            if ( (Math.abs(velocity.dir.getY()) + acc) > MAX_ACCELERATION ) {
-                acc = MAX_ACCELERATION + BRAKE_CONST - Math.abs(velocity.dir.getY());
+            if ( (Math.abs(velocity.dir.getY()) + acc) > max_acc ) {
+                acc = max_acc + brake_val - Math.abs(velocity.dir.getY());
             }
         } else {
             System.out.println("Fatal ERROR: accelerate");
@@ -215,7 +218,6 @@ public class Entity {
         }
         changeSpeed(dir, acc);
     }
-
 
     public void changeSpeed(char direction, double speed) {
         Vector newSpeed = new Vector(0.0, 0.0);
@@ -293,74 +295,14 @@ public class Entity {
         // System.out.println(", Velocity Horizontal: " + velocity.getX() + ", Vertical: " + velocity.getY());
     }
 
-    public void render(Graphics2D g2d) {
-        if (image == null) return; // If no image defined, don't render
-        AffineTransform affTrans = new AffineTransform();
-        AffineTransform originalTransform = g2d.getTransform();
-
-        // Get the rounded position and orientation of the vehicle
-        int roundedX = (int) Math.round(position.getX());
-        int roundedY = (int) Math.round(position.getY());
-        // angle ++;
-        // if (angle >= 360) angle = 0;
-
-        int imgWidth = getImage().getWidth();
-        int imgHeight = getImage().getHeight();
-        // Rotate the graphics
-        // g2d.rotate(Math.round(angle), roundedX + (float) (width / 2), roundedY + (float) (height / 2));
-
-        // Set the translation to the correct position
-        affTrans.translate(roundedX - (float) (imgWidth / 2) + (float) (width / 2), roundedY - (float) (imgHeight / 2) + (float) (height / 2));
-        // Apply the translation using the AffineTransform
-        g2d.drawImage(getImage(), affTrans, null);
-        g2d.setTransform(originalTransform);
-
-    }
-
-
-    public void renderVelocity(Graphics2D g2d) {
-        // Set color and thickness of the arrow
-        g2d.setColor(Color.RED);
-        g2d.setStroke(new BasicStroke(6));
-
-        int arrowSize = 20;  // Size of the arrowhead
-        int arrowAngle = 30; // Angle of the arrowhead
-
-        int arrowLength = (int) Math.sqrt(velocity.dir.getX() * velocity.dir.getX() + velocity.dir.getY() * velocity.dir.getY());
-        int arrowHeadX = (int) velocity.pos.getX() + (int) velocity.dir.getX() * 4;
-        int arrowHeadY = (int) velocity.pos.getY() + (int) velocity.dir.getY() * 4;
-
-        if (velocity.dir.getX() == 0 && velocity.dir.getY() == 0) {
-            return;
-        }
-        g2d.drawLine((int) velocity.pos.getX(), (int) velocity.pos.getY(), arrowHeadX, arrowHeadY);
-
-        // Calculate and draw the arrowhead
-        double angle = Math.atan2((int) velocity.dir.getY(), (int) velocity.dir.getX());
-        int arrowEndX1 = (int) (arrowHeadX - arrowSize * Math.cos(angle + Math.toRadians(arrowAngle)));
-        int arrowEndY1 = (int) (arrowHeadY - arrowSize * Math.sin(angle + Math.toRadians(arrowAngle)));
-        int arrowEndX2 = (int) (arrowHeadX - arrowSize * Math.cos(angle - Math.toRadians(arrowAngle)));
-        int arrowEndY2 = (int) (arrowHeadY - arrowSize * Math.sin(angle - Math.toRadians(arrowAngle)));
-
-        g2d.drawLine(arrowHeadX, arrowHeadY, arrowEndX1, arrowEndY1);
-        g2d.drawLine(arrowHeadX, arrowHeadY, arrowEndX2, arrowEndY2);
-    }
-
     public Entity copy() {
-        Entity temp = new Entity(position.getX(), position.getY(), width, height);
+        Entity temp = GameModel.createEntity(position.getX(), position.getY(), getClass().getName());
         temp.velocity.dir.setX(this.velocity.dir.getX());
         temp.velocity.dir.setY(this.velocity.dir.getY());
-        temp.image = this.image;
         temp.dir = this.dir;
         return temp;
     }
 
-    public BufferedImage getImage() { return image; }
+    public void setImage(BufferedImage img) { renderer.image = img; }
 
-    public void drawHitbox(Graphics2D g2d) {
-        hitbox.drawMatrix(g2d, color);
-        g2d.setColor(Color.DARK_GRAY);
-        g2d.setStroke(new BasicStroke(6));
-        g2d.drawRect((int) position.getX() + inset, (int) position.getY() + inset, width - borderSize, height - borderSize);
-    }
 }

@@ -1,0 +1,14 @@
+
+
+** Todo
+
+Add more monster images
+Add classes for different monsters
+
+
+
+
+** Notes
+
+Use 12 frames per animation loop. Good because 12 is divisible by 2, 3, 4, 6.
+

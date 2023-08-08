@@ -1,6 +1,6 @@
 package DataFormats;
 
-import GameObjects.Entity;
+import MapObjects.Entity;
 import Enums.Direction;
 import org.ejml.simple.SimpleMatrix;
 
