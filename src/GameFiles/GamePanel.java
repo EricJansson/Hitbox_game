@@ -42,7 +42,7 @@ public class GamePanel extends JPanel implements ActionListener {
         mainGFX.renderAllEntities((Graphics2D) g);
         field.background.renderAir((Graphics2D) g);
 
-        // GameModel.renderAllObstacles((Graphics2D) g);
+        // BackgroundPanel.renderAllObstacles((Graphics2D) g);
 
         // Make another function that renders the airbournes above the entities!!!!!
 
