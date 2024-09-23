@@ -12,12 +12,30 @@ public class EntityRenderer {
 
     public BufferedImage image;
 
-
     public EntityRenderer(Entity entity) {
         this.entity = entity;
     }
 
+    public void updateAnimation() {
+        if (entity.animation == null) { return; }
+        boolean updateStatus = entity.animation.update();
+        if (!updateStatus) {
+            entity.animation = null;
+        }
+    }
+
     public BufferedImage getImage() { return image; }
+
+    public BufferedImage getRenderImage() {
+        if (entity.animation != null) { // There exists an active animation
+            int[] indexPair = entity.animation.instance.frameSubImageIndexPairs.get(0);
+            BufferedImage animationImage = entity.animation.instance.getSubImage(indexPair[0], indexPair[1]);
+            if (animationImage != null) { // The animation has not ended
+                return animationImage;
+            }
+        }
+        return image;
+    }
 
 
     public void render(Graphics2D g2d) {
@@ -31,17 +49,16 @@ public class EntityRenderer {
         // angle ++;
         // if (angle >= 360) angle = 0;
 
-        int imgWidth = getImage().getWidth();
-        int imgHeight = getImage().getHeight();
+        int imgWidth = getRenderImage().getWidth();
+        int imgHeight = getRenderImage().getHeight();
         // Rotate the graphics
         // g2d.rotate(Math.round(angle), roundedX + (float) (width / 2), roundedY + (float) (height / 2));
 
         // Set the translation to the correct position
         affTrans.translate(roundedX - (float) (imgWidth / 2) + (float) (entity.width / 2) - entity.imageOffsetX, roundedY - (float) (imgHeight / 2) + (float) (entity.height / 2) - entity.imageOffsetY);
         // Apply the translation using the AffineTransform
-        g2d.drawImage(getImage(), affTrans, null);
+        g2d.drawImage(getRenderImage(), affTrans, null);
         g2d.setTransform(originalTransform);
-
     }
 
 
@@ -80,4 +97,5 @@ public class EntityRenderer {
         g2d.setStroke(new BasicStroke(6));
         g2d.drawRect((int) entity.position.getX() + inset, (int) entity.position.getY() + inset, entity.width - borderSize, entity.height - borderSize);
     }
+
 }

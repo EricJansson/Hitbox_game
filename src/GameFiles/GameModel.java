@@ -22,6 +22,7 @@ public class GameModel {
         addEntity(33, 15, "Bat");
         addEntity(22, 7, "RedSlime");
         addEntity(31, 5,"RedSlime");
+
         createHero(24, 10);
 
         CameraView.setTarget(GamePanel.hero);

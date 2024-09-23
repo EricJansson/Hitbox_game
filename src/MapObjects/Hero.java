@@ -23,6 +23,7 @@ public class Hero extends Entity {
     static final int OFFSET_X = (BackgroundPanel.TILE_SIZE / 2) - (WIDTH / 2);
     static final int OFFSET_Y = (BackgroundPanel.TILE_SIZE / 2) - (HEIGHT / 2);
 
+    public String animationName = "";
 
     public Color color = Color.GREEN;
 
@@ -61,6 +62,8 @@ public class Hero extends Entity {
         }
         if (WindowKeyListener.s && !WindowKeyListener.w) {
             setSpeed('S', accBoostValue);
+        } else if (WindowKeyListener.w && !WindowKeyListener.s) {
+            setSpeed('N', accBoostValue);
         } else if (WindowKeyListener.w && !WindowKeyListener.s) {
             setSpeed('N', accBoostValue);
         }

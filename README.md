@@ -9,6 +9,19 @@ This project was initially created to explore unit
 collision. It evolved into adapting to that collision 
 and from there I kept finding new ways to improve the game.
 
+## Controls
+
+W,A,S,D &nbsp;- &nbsp; Move\
+Space &nbsp;&nbsp;&nbsp; - &nbsp; Dash\
+P &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - &nbsp; Pause\
+Escape &nbsp; - &nbsp; Quit
+
+<u>**Debugging**</u>\
+L &nbsp; - &nbsp; Print player's current: coordinate position, direction, velocity and tile position\
+T &nbsp; - &nbsp; Move camera to predetermined position\
+Y &nbsp; - &nbsp; Focus camera on another entity\
+F &nbsp; - &nbsp; Upgrade movement (Walk -> Walk + Swim -> Fly -> Walk...)
+
 ## Interesting problems
 
 #### Collision
@@ -46,6 +59,10 @@ them by "collision area".
 
 By adapting first to the obstacle which is colliding the most, it
 won't slow down in x-value in the given scenario.
+
+This is not a bulletproof solution though. If the brown box in the last example would be really 
+thin, then the orange box could have a larger collision area than the brown one. This would lead
+to an adaptation that is incorrect.
 
 ## Code
 

@@ -1,5 +1,7 @@
 package GameFiles;
 
+import Animations.AllAnimationData;
+import DataFormats.Vector;
 import MapObjects.Hero;
 
 import javax.swing.*;
@@ -7,6 +9,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import Background.*;
 import Utils.*;
 
@@ -14,15 +19,19 @@ public class GamePanel extends JPanel implements ActionListener {
     public static GameModel model;
     public static Field field;
     public static MainGraphics mainGFX;
+    public static AllAnimationData allAnimationData;
     public static Hero hero;
     static final int FRAMES_PER_SECOND = 60;
     static Timer timer;
     long startTime;
+    public static long currentTime;
     public GamePanel() {
         startTime = System.currentTimeMillis();
+        currentTime = System.currentTimeMillis();
         model = new GameModel();
         field = new Field();
         mainGFX = new MainGraphics(this);
+        allAnimationData = new AllAnimationData();
 
         // Background.CameraView.target = null;
         // Background.CameraView.goToTile(14,10);
@@ -31,6 +40,10 @@ public class GamePanel extends JPanel implements ActionListener {
     public void start() {
         timer = new Timer((1000 / FRAMES_PER_SECOND), this);
         timer.start();
+    }
+
+    public void updateGlobalTime() {
+        GamePanel.currentTime = System.currentTimeMillis();
     }
 
     public void drawMap(Graphics g) {
@@ -70,6 +83,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
         if (WindowKeyListener.space) {
             GamePanel.hero.boost();
+            GamePanel.hero.startAnimation("slimeMovement");
             System.out.println("BOOST!!");
             WindowKeyListener.space = false;
         }
@@ -84,6 +98,7 @@ public class GamePanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent arg0) {
         if (arg0.getSource() == timer && !WindowKeyListener.paused) {
+            updateGlobalTime();
             checkControls();
             updateModel();
             repaint();
@@ -96,9 +111,6 @@ public class GamePanel extends JPanel implements ActionListener {
                 repaint();
             }
         }
-
     }
-
-
 
 }

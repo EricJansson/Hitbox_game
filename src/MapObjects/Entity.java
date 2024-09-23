@@ -1,5 +1,8 @@
 package MapObjects;
 
+import Animations.AllAnimationData;
+import Animations.AnimationInstance;
+import Animations.EntityAnimation;
 import Background.Field;
 import Enums.Direction;
 import Enums.MovementType;
@@ -12,10 +15,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import DataFormats.*;
+import GameFiles.GamePanel;
 
 
 public abstract class Entity {
     public MovementType[] movingType = new MovementType[]{MovementType.WALKING};
+    public EntityAnimation animation = null;
     public String IMG_FILE_NAME;
     public Vector position;
     public Vector2D velocity;
@@ -57,6 +62,19 @@ public abstract class Entity {
         hitbox = new GameMatrix(position.getX(), position.getX() + this.width, position.getY(), position.getY() + height);
         newlySpawned = true;
     }
+
+    public void startAnimation(String animInstanceName) {
+        this.animation = new EntityAnimation(animInstanceName);
+        animation.start(GamePanel.currentTime);
+    }
+
+    public void stopAnimation() {
+        if (animation != null) {
+            animation.cancel();
+            animation = null;
+        }
+    }
+
 
     public double calcSlowdown(double vel) {
         // Maybe do something less linear as a slowdown formula

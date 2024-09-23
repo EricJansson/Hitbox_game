@@ -1,13 +1,21 @@
 package GameFiles;
 
-import GameFiles.GameModel;
-import GameFiles.GamePanel;
-import GameFiles.GameWindow;
+import DataFormats.Vector;
+import Animations.AnimationInstance;
+import Animations.AnimationTemplate;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class MainGraphics {
     public static GamePanel gamePanel;
+
+    // Hold the animation images and its data
+    public static ArrayList<AnimationTemplate> animationTemplateList = new ArrayList<>();
+
+    // Holds the actual playable animation with time intervals and sub-image order selection
+    public static ArrayList<AnimationInstance> animationList = new ArrayList<>();
+
     public MainGraphics(GamePanel GP) {
         // new Background.CameraView();
         gamePanel = GP;
@@ -21,13 +29,12 @@ public class MainGraphics {
 
     public void renderAllEntities(Graphics2D g2d) {
         for (int i = 0; i< GameModel.allEntities.size(); i++) {
+            GameModel.allEntities.get(i).renderer.updateAnimation();
             GameModel.allEntities.get(i).renderer.drawHitbox(g2d);
             GameModel.allEntities.get(i).renderer.render(g2d);
             GameModel.allEntities.get(i).renderer.renderVelocity(g2d);
         }
     }
-
-
 
     public void displayBorderWindow(Graphics2D g2d, int width, int height) { displayBorderWindow(g2d, width, height, Color.LIGHT_GRAY); }
     public void displayBorderWindow(Graphics2D g2d, int width, int height, Color color) {
