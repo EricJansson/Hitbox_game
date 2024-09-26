@@ -34,6 +34,12 @@ public class Bat extends Entity {
         setImage(img);
     }
 
+    public void move() {
+        super.move();
+        // Always run animation
+        renderer.startAnimationLoop("batFlyingUpDown", 1);
+    }
+
     public Entity copy() {
         Entity temp = new Bat(position.getX(), position.getY());
         temp.velocity.dir.setX(this.velocity.dir.getX()); // Might need - offsetX

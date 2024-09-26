@@ -1,6 +1,8 @@
 package MapObjects;
 
 import Background.BackgroundPanel;
+import Enums.MovementType;
+import GameFiles.GamePanel;
 import Utils.WindowKeyListener;
 
 import java.awt.*;
@@ -11,10 +13,11 @@ import DataFormats.*;
 
 import javax.imageio.ImageIO;
 
+import static Animations.AnimationInstance.resizeImageTo;
 import static Background.BackgroundPanel.TILE_SIZE;
 
 public class Hero extends Entity {
-    static final String IMG_FILE_NAME = "slime";
+    static final String IMG_FILE_NAME = "chicken";
     static BufferedImage img = null;
     public static final int WIDTH = 46;
     public static final int HEIGHT = 46;
@@ -22,20 +25,17 @@ public class Hero extends Entity {
     static final int IMG_OFFSET_Y = 6;
     static final int OFFSET_X = (BackgroundPanel.TILE_SIZE / 2) - (WIDTH / 2);
     static final int OFFSET_Y = (BackgroundPanel.TILE_SIZE / 2) - (HEIGHT / 2);
-
     public String animationName = "";
-
     public Color color = Color.GREEN;
+    public double animationSpeed = 1.0;
 
     public Hero() {
         this(64f, 64f);
     }
-
     public Hero(double xCor, double yCor) {
         super(xCor + OFFSET_X, yCor + OFFSET_Y, WIDTH, HEIGHT, IMG_FILE_NAME);
         imageOffsetX = IMG_OFFSET_X;
         imageOffsetY = IMG_OFFSET_Y;
-
         if(image == null) {
             try {
                 image = ImageIO.read(new File(".\\src\\assets\\EntityImages\\" + IMG_FILE_NAME + ".png"));
@@ -44,10 +44,93 @@ public class Hero extends Entity {
                 e.printStackTrace();
             }
         }
+        image = resizeImageTo(image, 60, 60);
         img = image;
         setImage(img);
     }
 
+    @Override
+    public void move() {
+        super.move();
+        // Run animation while moving
+        double xSpeed = velocity.dir.getX();
+        double ySpeed = velocity.dir.getY();
+
+
+        if (this.movingType[0] == MovementType.WALKING && (xSpeed != 0 || ySpeed != 0)) {
+            if (Math.abs(xSpeed) >= Math.abs(ySpeed)) {
+                if (xSpeed > 0) { // Moving right
+                    renderer.startAnimationLoop("chickenMoveRight", animationSpeed, 1);
+                } else { // Moving left
+                    renderer.startAnimationLoop("chickenMoveLeft", animationSpeed, 1);
+                }
+            } else if (Math.abs(xSpeed) < Math.abs(ySpeed)) {
+                if (ySpeed > 0) { // Moving up
+                    renderer.startAnimationLoop("chickenMoveDown", animationSpeed, 1);
+                } else { // Moving down
+                    renderer.startAnimationLoop("chickenMoveUp", animationSpeed, 1);
+                }
+            }
+
+        } else if (this.movingType[0] == MovementType.SWIMMING && (xSpeed != 0 || ySpeed != 0)) { // If moving, run animation
+            if (Math.abs(xSpeed) >= Math.abs(ySpeed)) {
+                if (xSpeed > 0) { // Moving right
+                    renderer.startAnimationLoop("redSlimeMoveRight", animationSpeed, 1);
+                } else { // Moving left
+                    renderer.startAnimationLoop("redSlimeMoveLeft", animationSpeed, 1);
+                }
+            } else if (Math.abs(xSpeed) < Math.abs(ySpeed)) {
+                if (ySpeed > 0) { // Moving up
+                    renderer.startAnimationLoop("redSlimeMoveDown", animationSpeed, 1);
+                } else { // Moving down
+                    renderer.startAnimationLoop("redSlimeMoveUp", animationSpeed, 1);
+                }
+            }
+
+
+        } else if (this.movingType[0] == MovementType.FLYING) {
+            if (xSpeed != 0 || ySpeed != 0) {
+                renderer.startAnimationLoop("batFlyingAround", 0.5, 1);
+            } else {
+                renderer.startAnimationLoop("batFlyingUpDown", 2, 1);
+            }
+        }
+
+
+        else {
+            System.out.println("Stop animation");
+            renderer.stopAnimation();
+        }
+    }
+
+    @Override
+    public void updateMovementType(MovementType[] movingType) {
+        super.updateMovementType(movingType);
+        if (this.movingType.length > 1) { return; }
+        if (this.movingType[0] == MovementType.WALKING) {
+            try {
+                image = ImageIO.read(new File(".\\src\\assets\\EntityImages\\" + IMG_FILE_NAME + ".png"));
+            } catch (Exception e) {
+                System.out.println("Entity() init Error!");
+                e.printStackTrace();
+            }
+            image = resizeImageTo(image, 60, 60);
+            img = image;
+            setImage(img);
+        } else if (this.movingType[0] == MovementType.SWIMMING) {
+            try {
+                image = ImageIO.read(new File(".\\src\\assets\\EntityImages\\redJelly.png"));
+            } catch (Exception e) {
+                System.out.println("Entity() init Error!");
+                e.printStackTrace();
+            }
+            image = resizeImageTo(image, 60, 60);
+            img = image;
+            setImage(img);
+        } else if (this.movingType[0] == MovementType.FLYING) {
+
+        }
+    }
 
     /**
      * Will increase speed above maxSpeed. Because you can't accelerate when curSpeed > maxSpeed,

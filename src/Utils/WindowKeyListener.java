@@ -63,13 +63,13 @@ public class WindowKeyListener implements KeyListener {
         } else if (keyCode == KeyEvent.VK_F) {  // Pause timer
             f = true;
             if (GamePanel.hero.movingType[0] == MovementType.WALKING) {
-                GamePanel.hero.movingType = new MovementType[]{ MovementType.SWIMMING };
+                GamePanel.hero.updateMovementType(new MovementType[]{ MovementType.SWIMMING });
                 System.out.println("You can now SWIM!");
             } else if (GamePanel.hero.movingType[0] == MovementType.SWIMMING) {
-                GamePanel.hero.movingType = new MovementType[]{ MovementType.FLYING };
+                GamePanel.hero.updateMovementType(new MovementType[]{ MovementType.FLYING });
                 System.out.println("You can now FLY!");
             } else if (GamePanel.hero.movingType[0] == MovementType.FLYING) {
-                GamePanel.hero.movingType = new MovementType[]{ MovementType.WALKING };
+                GamePanel.hero.updateMovementType(new MovementType[]{ MovementType.WALKING });
                 System.out.println("You can now WALK!");
             }
         }
@@ -86,7 +86,6 @@ public class WindowKeyListener implements KeyListener {
         if (keyChar == 'n' && !nPressed) {
             nPressed = true;
             n = true;
-            System.out.println("N pressed!");
         }
     }
 
@@ -113,7 +112,6 @@ public class WindowKeyListener implements KeyListener {
             l = false;
         } else if (keyCode == KeyEvent.VK_N) {  // Test
             nPressed = false;
-            System.out.println("N Released!");
         } else if (keyCode == KeyEvent.VK_F) {  // Test
             f = false;
         }

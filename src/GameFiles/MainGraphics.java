@@ -1,6 +1,5 @@
 package GameFiles;
 
-import DataFormats.Vector;
 import Animations.AnimationInstance;
 import Animations.AnimationTemplate;
 
@@ -29,10 +28,10 @@ public class MainGraphics {
 
     public void renderAllEntities(Graphics2D g2d) {
         for (int i = 0; i< GameModel.allEntities.size(); i++) {
-            GameModel.allEntities.get(i).renderer.updateAnimation();
-            GameModel.allEntities.get(i).renderer.drawHitbox(g2d);
+            GameModel.allEntities.get(i).renderer.updateCurrentAnimationFrame();
+            // GameModel.allEntities.get(i).renderer.drawHitbox(g2d);
             GameModel.allEntities.get(i).renderer.render(g2d);
-            GameModel.allEntities.get(i).renderer.renderVelocity(g2d);
+            // GameModel.allEntities.get(i).renderer.renderVelocity(g2d);
         }
     }
 

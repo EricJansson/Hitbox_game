@@ -23,7 +23,7 @@ public class GameModel {
         addEntity(22, 7, "RedSlime");
         addEntity(31, 5,"RedSlime");
 
-        createHero(24, 10);
+        createHero(24, 18);
 
         CameraView.setTarget(GamePanel.hero);
     }
@@ -135,4 +135,12 @@ public class GameModel {
         return new Obstacle(movingType, xLeft, xRight, yDown, yTop);
     }
 
+    public void updateAnimations() {
+        for (int ii = 0; ii < allEntities.size(); ii++) {
+            if (allEntities.get(ii).renderer.animation == null) { continue; } // No animation active for entity[ii]
+            if (allEntities.get(ii).renderer.animation.isAnimationFinished(GamePanel.currentTime)) {
+                allEntities.get(ii).renderer.updateAnimationStatus(GamePanel.currentTime);
+            }
+        }
+    }
 }

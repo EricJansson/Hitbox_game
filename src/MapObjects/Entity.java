@@ -20,7 +20,6 @@ import GameFiles.GamePanel;
 
 public abstract class Entity {
     public MovementType[] movingType = new MovementType[]{MovementType.WALKING};
-    public EntityAnimation animation = null;
     public String IMG_FILE_NAME;
     public Vector position;
     public Vector2D velocity;
@@ -61,18 +60,6 @@ public abstract class Entity {
         this.height = height;
         hitbox = new GameMatrix(position.getX(), position.getX() + this.width, position.getY(), position.getY() + height);
         newlySpawned = true;
-    }
-
-    public void startAnimation(String animInstanceName) {
-        this.animation = new EntityAnimation(animInstanceName);
-        animation.start(GamePanel.currentTime);
-    }
-
-    public void stopAnimation() {
-        if (animation != null) {
-            animation.cancel();
-            animation = null;
-        }
     }
 
 
@@ -203,6 +190,11 @@ public abstract class Entity {
             renderer.color = Color.RED;
         }
         controlVector = new Vector(0,0);
+    }
+
+    public void updateMovementType(MovementType[] movingType) {
+        if (MovementType.isMatching(this.movingType, movingType)) { return; }
+        this.movingType = movingType.clone();
     }
 
     public void update() {

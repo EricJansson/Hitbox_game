@@ -8,11 +8,73 @@ public class AllAnimationData {
 
     public AllAnimationData() {
         templates.add(new AnimationTemplate("slimeBounce", 4, 4) );
+        templates.add(new AnimationTemplate("redSlimeMovement", 3, 4) );
+        templates.add(new AnimationTemplate("chickenMovement", 3, 4) );
+        templates.add(new AnimationTemplate("batFlying", 3, 1) );
+        templates.add(new AnimationTemplate("explode", 6, 2) );
 
         instances.add(new AnimationInstance(
                 "slimeMovement", "slimeBounce",
                 this.createFrameDurationList(new double[]{100, 100, 100, 100, 100}),
                 this.createFrameSubImageList(new int[]{0, 0}, new int[]{1, 0}, new int[]{2, 0}, new int[]{3, 0}, new int[]{0, 0})
+        ));
+
+        instances.add(new AnimationInstance(
+                "chickenMoveUp", "chickenMovement",
+                this.createFrameDurationList(new double[]{100, 100, 100, 100, 100}),
+                this.createFrameSubImageList(new int[]{0, 0}, new int[]{1, 0}, new int[]{2, 0}, new int[]{1, 0}, new int[]{0, 0})
+        ));
+        instances.add(new AnimationInstance(
+                "chickenMoveRight", "chickenMovement",
+                this.createFrameDurationList(new double[]{100, 100, 100, 100, 100}),
+                this.createFrameSubImageList(new int[]{0, 1}, new int[]{1, 1}, new int[]{2, 1}, new int[]{1, 1}, new int[]{0, 1})
+        ));
+        instances.add(new AnimationInstance(
+                "chickenMoveDown", "chickenMovement",
+                this.createFrameDurationList(new double[]{100, 100, 100, 100, 100}),
+                this.createFrameSubImageList(new int[]{0, 2}, new int[]{1, 2}, new int[]{2, 2}, new int[]{1, 2}, new int[]{0, 2})
+        ));
+        instances.add(new AnimationInstance(
+                "chickenMoveLeft", "chickenMovement",
+                this.createFrameDurationList(new double[]{100, 100, 100, 100, 100}),
+                this.createFrameSubImageList(new int[]{0, 3}, new int[]{1, 3}, new int[]{2, 3}, new int[]{1, 3}, new int[]{0, 3})
+        ));
+
+        instances.add(new AnimationInstance(
+                "redSlimeMoveUp", "redSlimeMovement",
+                this.createFrameDurationList(new double[]{100, 100, 100, 100, 100}),
+                this.createFrameSubImageList(new int[]{0, 0}, new int[]{1, 0}, new int[]{2, 0}, new int[]{1, 0}, new int[]{0, 0})
+        ));
+        instances.add(new AnimationInstance(
+                "redSlimeMoveRight", "redSlimeMovement",
+                this.createFrameDurationList(new double[]{100, 100, 100, 100, 100}),
+                this.createFrameSubImageList(new int[]{0, 1}, new int[]{1, 1}, new int[]{2, 1}, new int[]{1, 1}, new int[]{0, 1})
+        ));
+        instances.add(new AnimationInstance(
+                "redSlimeMoveDown", "redSlimeMovement",
+                this.createFrameDurationList(new double[]{100, 100, 100, 100, 100}),
+                this.createFrameSubImageList(new int[]{0, 2}, new int[]{1, 2}, new int[]{2, 2}, new int[]{1, 2}, new int[]{0, 2})
+        ));
+        instances.add(new AnimationInstance(
+                "redSlimeMoveLeft", "redSlimeMovement",
+                this.createFrameDurationList(new double[]{100, 100, 100, 100, 100}),
+                this.createFrameSubImageList(new int[]{0, 3}, new int[]{1, 3}, new int[]{2, 3}, new int[]{1, 3}, new int[]{0, 3})
+        ));
+
+        instances.add(new AnimationInstance(
+                "batFlyingAround", "batFlying",
+                this.createFrameDurationList(new double[]{200, 100, 200, 100, 200}),
+                this.createFrameSubImageList(new int[]{0, 0}, new int[]{1, 0}, new int[]{2, 0}, new int[]{1, 0}, new int[]{0, 0})
+        ));
+        instances.add(new AnimationInstance(
+                "batFlyingUpDown", "batFlying",
+                this.createFrameDurationList(new double[]{200, 100, 200, 100, 200}),
+                this.createFrameSubImageList(new int[]{0, 0}, new int[]{1, 0}, new int[]{2, 0}, new int[]{1, 0}, new int[]{0, 0})
+        ));
+        instances.add(new AnimationInstance(
+                "slimeExplode", "explode",
+                this.createFrameDurationList(new double[]{100, 100, 100, 100, 100, 100, 100}),
+                this.createFrameSubImageList(new int[]{0, 0}, new int[]{1, 0}, new int[]{2, 0}, new int[]{3, 0}, new int[]{4, 0}, new int[]{5, 0}, new int[]{0, 1})
         ));
 
         this.testAnimationInstaces();

@@ -64,6 +64,10 @@ public class GamePanel extends JPanel implements ActionListener {
         // mainGFX.displayBorderWindow((Graphics2D) g, 600, 400);
     }
 
+    private void concludeAnimations() {
+        model.updateAnimations();
+    }
+
     public void updateModel() {
         model.updateEntities();
     }
@@ -83,7 +87,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
         if (WindowKeyListener.space) {
             GamePanel.hero.boost();
-            GamePanel.hero.startAnimation("slimeMovement");
+            GamePanel.hero.renderer.startAnimation("slimeExplode", 2);
             System.out.println("BOOST!!");
             WindowKeyListener.space = false;
         }
@@ -99,11 +103,14 @@ public class GamePanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent arg0) {
         if (arg0.getSource() == timer && !WindowKeyListener.paused) {
             updateGlobalTime();
+            concludeAnimations();
             checkControls();
             updateModel();
             repaint();
         } else {
             if (WindowKeyListener.n) {
+                updateGlobalTime();
+                concludeAnimations();
                 WindowKeyListener.n = false;
                 System.out.println("          ~~   Next frame   ~~");
                 checkControls();
@@ -112,5 +119,6 @@ public class GamePanel extends JPanel implements ActionListener {
             }
         }
     }
+
 
 }

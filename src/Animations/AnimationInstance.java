@@ -1,5 +1,6 @@
 package Animations;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -19,10 +20,7 @@ public class AnimationInstance {
         this.frameDurations = new ArrayList<>(frameDurationList);
         this.originalFrameDurations = new ArrayList<>(frameDurationList);
         // Add first time to all consecutive times -> Results in list of values that relate to animationStartTime
-        for (int ii = 1; ii < frameDurations.size(); ii++) {
-            double resultingTime = frameDurations.get(ii - 1) + this.frameDurations.get(ii);
-            this.frameDurations.set(ii, resultingTime);
-        }
+        processFrameDurations();
         calcNormalizedList();
         generateSubImageFrameList();
     }
@@ -30,26 +28,20 @@ public class AnimationInstance {
     public AnimationInstance copy() {
         // Deep copy of frame durations
         ArrayList<Double> copiedFrameDurations = new ArrayList<>(originalFrameDurations);
-
         // Deep copy of frameSubImageIndexPairs (since it contains arrays, we need to clone each array)
         ArrayList<int[]> copiedFrameSubImageIndexPairs = new ArrayList<>();
         for (int[] pair : frameSubImageIndexPairs) {
             copiedFrameSubImageIndexPairs.add(pair.clone());  // Clone each int array
         }
-
         // Create a new AnimationInstance with the copied data
         return new AnimationInstance(animationName, template.imageName, copiedFrameDurations, copiedFrameSubImageIndexPairs);
     }
 
-    public boolean updateInstance(long timeSinceStart) {
-        if (frameDurations.isEmpty()) { return false; }
-        while (!frameDurations.isEmpty() && timeSinceStart > frameDurations.get(0)) {
-            frameDurations.remove(0);
-            subImageFrames.remove(0);
-            frameSubImageIndexPairs.remove(0);
+    public int getInstanceFrame (long timeSinceStart) {
+        for (int ii = 0; ii < frameDurations.size(); ii++) {
+            if (timeSinceStart < frameDurations.get(ii)) { return ii; }
         }
-        if (frameDurations.isEmpty()) { return false; }
-        return true;
+        return frameDurations.size() - 1; // When animation is over, return last frame
     }
 
     public BufferedImage getSubImage(int xIndex, int yIndex) {
@@ -63,6 +55,24 @@ public class AnimationInstance {
         }
     }
 
+    public void resizeSubImageFrameList(int targetWidth, int targetHeight) {
+        for (int ii = 0; ii < subImageFrames.size(); ii++) {
+            BufferedImage temp = subImageFrames.get(ii);
+            temp = resizeImageTo(temp, targetWidth, targetHeight);
+            subImageFrames.set(ii, temp);
+        }
+    }
+
+    public static BufferedImage resizeImageTo(BufferedImage originalImage, int targetWidth, int targetHeight) {
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = resizedImage.createGraphics();
+        // Draw the original image, scaled to the new width and height
+        g2d.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+        // Dispose of the Graphics2D object to free resources
+        g2d.dispose();
+        return resizedImage;
+    }
+
     public void calcNormalizedList() {
         double sum = 0;
         for (double value : this.frameDurations) {
@@ -70,6 +80,24 @@ public class AnimationInstance {
         }
         for (double value : this.frameDurations) {
             normalizedFrameDurations.add(value / sum);
+        }
+    }
+
+    /**
+     * Add first time to all consecutive times -> Results in list of values that relate to animationStartTime
+     */
+    public void processFrameDurations() {
+        for (int ii = 1; ii < frameDurations.size(); ii++) {
+            double resultingTime = frameDurations.get(ii - 1) + this.frameDurations.get(ii);
+            this.frameDurations.set(ii, resultingTime);
+        }
+    }
+
+    public void calcFrameDurations(double fullAnimationRunTimeSeconds) {
+        this.frameDurations = new ArrayList<>();
+        for (double value : this.normalizedFrameDurations) {
+            // Calc and update new frameDurations based on a total time
+            frameDurations.add(value * fullAnimationRunTimeSeconds * 1000);
         }
     }
 }

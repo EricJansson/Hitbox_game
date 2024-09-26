@@ -1,6 +1,7 @@
 package Animations;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -39,8 +40,8 @@ public class AnimationTemplate {
         int imgWidth = getImage().getWidth();
         int imgHeight = getImage().getHeight();
 
-        this.subImageWidth = imgWidth / verticalImages;
-        this.subImageHeight = imgHeight / horizontalImages;
+        this.subImageWidth = imgWidth / horizontalImages;
+        this.subImageHeight = imgHeight / verticalImages;
     }
 
     public BufferedImage getSubImage(int xIndex, int yIndex) {
@@ -48,6 +49,7 @@ public class AnimationTemplate {
         int y = yIndex * subImageHeight;
         return image.getSubimage(x, y, subImageWidth, subImageHeight);
     }
+
 
     public BufferedImage getImage() { return image; }
 

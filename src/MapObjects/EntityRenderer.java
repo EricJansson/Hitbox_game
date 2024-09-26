@@ -1,38 +1,94 @@
 package MapObjects;
 
+import Animations.EntityAnimation;
+import GameFiles.GamePanel;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class EntityRenderer {
     public Entity entity;
+    public EntityAnimation animation = null;
+    public int currentAnimationFrameIndex = -1;
     public Color color = Color.GREEN;
     int borderSize = 16;
     int inset = borderSize / 2;
 
     public BufferedImage image;
+    public boolean loopAnimation;
 
     public EntityRenderer(Entity entity) {
         this.entity = entity;
     }
 
-    public void updateAnimation() {
-        if (entity.animation == null) { return; }
-        boolean updateStatus = entity.animation.update();
-        if (!updateStatus) {
-            entity.animation = null;
+    public void startAnimation(String animInstanceName) { startAnimation(animInstanceName, 0.0, 0); }
+    public void startAnimation(String animInstanceName, double fullAnimationRunTimeSeconds) { startAnimation(animInstanceName, fullAnimationRunTimeSeconds, 0); }
+    public void startAnimation(String animInstanceName, int priority) { startAnimation(animInstanceName, 0.0, priority); }
+    public void startAnimation(String animInstanceName, double fullAnimationRunTimeSeconds, int priority) {
+        if (this.animation != null && this.animation.priority > priority) {
+            return;
         }
+        stopAnimation(); // Reset previous animation settings
+        this.animation = new EntityAnimation(animInstanceName, fullAnimationRunTimeSeconds, priority);
+        // this.animation.instance.resizeSubImageFrameList(entity.width, entity.height);
+        this.animation.instance.resizeSubImageFrameList(64, 64);
+        this.loopAnimation = false;
+        animation.start(GamePanel.currentTime);
+    }
+
+    public void startAnimationLoop(String animInstanceName) { startAnimationLoop(animInstanceName, 0.0, 0); }
+    public void startAnimationLoop(String animInstanceName, double fullAnimationRunTimeSeconds) { startAnimationLoop(animInstanceName, fullAnimationRunTimeSeconds, 0); }
+    public void startAnimationLoop(String animInstanceName, int priority) { startAnimationLoop(animInstanceName, 0.0, priority); }
+    public void startAnimationLoop(String animInstanceName, double fullAnimationRunTimeSeconds, int priority) {
+        if (this.animation != null && (this.animation.instance.animationName == animInstanceName || this.animation.priority > priority)) {
+            return;
+        }
+        this.animation = new EntityAnimation(animInstanceName, fullAnimationRunTimeSeconds, priority);
+        // this.animation.instance.resizeSubImageFrameList(entity.width, entity.height);
+        this.animation.instance.resizeSubImageFrameList(64, 64);
+        this.loopAnimation = true;
+        this.animation.start(GamePanel.currentTime);
+    }
+
+    public void stopAnimation() { stopAnimation("all"); }
+    public void stopAnimation(String animInstanceName) {
+        if (this.animation != null && (animation.instance.animationName == animInstanceName || animInstanceName == "all")) {
+            animation.cancel();
+            animation = null;
+            loopAnimation = false;
+        }
+    }
+
+    /**
+     * This runs before the model to clear all expired animations
+     */
+    public void updateAnimationStatus(long currentTime) {
+        if (animation == null) { return; }
+        if (loopAnimation) {
+            animation.animationStartTime = currentTime;
+            currentAnimationFrameIndex = 0;
+        } else {
+            animation = null;
+        }
+    }
+
+    public void updateCurrentAnimationFrame() {
+        if (animation == null) { return; }
+        long timeSinceStartOfAnimation = GamePanel.currentTime - animation.animationStartTime;
+        this.currentAnimationFrameIndex = animation.instance.getInstanceFrame(timeSinceStartOfAnimation);
     }
 
     public BufferedImage getImage() { return image; }
 
     public BufferedImage getRenderImage() {
-        if (entity.animation != null) { // There exists an active animation
-            int[] indexPair = entity.animation.instance.frameSubImageIndexPairs.get(0);
-            BufferedImage animationImage = entity.animation.instance.getSubImage(indexPair[0], indexPair[1]);
-            if (animationImage != null) { // The animation has not ended
-                return animationImage;
+        if (animation != null) { // There exists an active animation
+            BufferedImage animationImage = animation.instance.subImageFrames.get(this.currentAnimationFrameIndex);
+            if (animationImage == null) { // The animation has not ended
+                System.out.println("FATAL ERROR: getRenderImage() - animation == null");
+                System.exit(1);
             }
+            return animationImage;
         }
         return image;
     }
@@ -42,6 +98,7 @@ public class EntityRenderer {
         if (image == null) return; // If no image defined, don't render
         AffineTransform affTrans = new AffineTransform();
         AffineTransform originalTransform = g2d.getTransform();
+        BufferedImage imageToRender = getRenderImage();
 
         // Get the rounded position and orientation of the vehicle
         int roundedX = (int) Math.round(entity.position.getX());
@@ -49,15 +106,15 @@ public class EntityRenderer {
         // angle ++;
         // if (angle >= 360) angle = 0;
 
-        int imgWidth = getRenderImage().getWidth();
-        int imgHeight = getRenderImage().getHeight();
+        int imgWidth = imageToRender.getWidth();
+        int imgHeight = imageToRender.getHeight();
         // Rotate the graphics
         // g2d.rotate(Math.round(angle), roundedX + (float) (width / 2), roundedY + (float) (height / 2));
 
         // Set the translation to the correct position
         affTrans.translate(roundedX - (float) (imgWidth / 2) + (float) (entity.width / 2) - entity.imageOffsetX, roundedY - (float) (imgHeight / 2) + (float) (entity.height / 2) - entity.imageOffsetY);
         // Apply the translation using the AffineTransform
-        g2d.drawImage(getRenderImage(), affTrans, null);
+        g2d.drawImage(imageToRender, affTrans, null);
         g2d.setTransform(originalTransform);
     }
 
